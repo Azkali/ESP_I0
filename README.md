@@ -30,5 +30,6 @@ ESP_I/0 Functions and Buttons
 For the Deep-sleep button you have to use a 10kΩ pulldown resistor to the ground.
 
 ## TODO: 
+'''
 [ ]001: Add Play/Pause Button
 [ ]002: Add Forward/Back Buttons & Function
