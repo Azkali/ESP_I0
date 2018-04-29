@@ -14,7 +14,7 @@
 
  // Pin used for pulse counting
  // GPIO33 is RTC_GPIO08 (see esp32_chip_pin_list_en.pdf)
- #define PULSE_CNT_GPIO_NUM 33
+ #define PULSE_CNT_GPIO_NUM_33 33
  #define PULSE_CNT_RTC_GPIO_NUM 8
 
 

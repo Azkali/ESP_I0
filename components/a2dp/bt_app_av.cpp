@@ -27,6 +27,8 @@
 #include "driver/i2s.h"
 
 #include "gui_handler.h"
+#include "play_pause.h"
+
 
 
 extern GuiHandler gui;
@@ -107,6 +109,7 @@ static void bt_av_hdl_a2d_evt(uint16_t event, void *p_param)
         break;
     }
     case ESP_A2D_AUDIO_STATE_EVT: {
+        /*play_pause_gpio_config(PULSE_CNT_GPIO_NUM_12);*/
         a2d = (esp_a2d_cb_param_t *)(p_param);
         ESP_LOGI(BT_AV_TAG, "A2DP audio state: %s", m_a2d_audio_state_str[a2d->audio_stat.state]);
         m_audio_state = a2d->audio_stat.state;

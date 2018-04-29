@@ -35,6 +35,7 @@
 #include "driver/gpio.h"
 
 #include "deep_sleep.h"
+#include "play_pause.h"
 
 #include "sdkconfig.h"
 #include "esp_event.h"
@@ -131,10 +132,10 @@ extern "C" void app_main()
     bt_app_work_dispatch(bt_av_hdl_stack_evt, BT_APP_EVT_STACK_UP, NULL, 0, NULL);
 
     /* Deep-sleep Function */
-    ds_gpio_config(PULSE_CNT_GPIO_NUM);
+    ds_gpio_config(PULSE_CNT_GPIO_NUM_33);
 
-    /* Play/Pause function */
-    /*pp_gpio_config();*/
+    /* Play/Pause function*/
+    play_pause_gpio_config(PULSE_CNT_GPIO_NUM_12);
 
     /* OLED Launch*/
     ESP_LOGI("tag", ">> app_main");
@@ -160,6 +161,7 @@ static void bt_av_hdl_stack_evt(uint16_t event, void *p_param)
         /* initialize AVRCP controller */
         esp_avrc_ct_init();
         esp_avrc_ct_register_callback(bt_app_rc_ct_cb);
+        
         
         /* set discoverable and connectable mode, wait to be connected */
         esp_bt_gap_set_scan_mode(ESP_BT_SCAN_MODE_CONNECTABLE_DISCOVERABLE);

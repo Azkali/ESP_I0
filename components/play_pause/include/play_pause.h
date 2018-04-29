@@ -1,37 +1,69 @@
 /*
- * deep_sleep.h
+ * play_pause.h
  *
  *  Created on: 31.03.2018
  *      Author: Azkali Manad
  */
- #ifndef INCLUDE_DEEP_SLEEP_H_
- #define INCLUDE_DEEP_SLEEP_H_
- #ifdef __cplusplus
- extern "C" {
- #endif
+ #ifndef INCLUDE_PLAY_PAUSE_H_
+ #define INCLUDE_PLAY_PAUSE_H_
+ #include "driver/gpio.h"
 
  #define ESP_INTR_FLAG_DEFAULT 0
 
  // Pin used for pulse counting
  // GPIO33 is RTC_GPIO08 (see esp32_chip_pin_list_en.pdf)
- #define PULSE_CNT_GPIO_NUM 33
- #define PULSE_CNT_RTC_GPIO_NUM 8
+ #define PULSE_CNT_GPIO_NUM_12 (gpio_num_t)12
+
+
+struct BtCmdHandlerConfig {
+    gpio_num_t pulse_button_num;
+    
+    public:
+  BtCmdHandlerConfig() : pulse_button_num() {}
+  BtCmdHandlerConfig(gpio_num_t btnNum) : pulse_button_num(btnNum) {};
+};
+
+template <typename T>
+class BtCmdHandler {
+    public:
+    BtCmdHandler(T _config);
+
+    protected:
+    static void handleEvent(BtCmdHandler<T> *_this);
+    virtual void handleEvent();
+
+    private:
+    T config;
+};
 
 
 
-//#define
+
+
+struct PlayPauseConfig : BtCmdHandlerConfig {
+    public:
+    PlayPauseConfig(): BtCmdHandlerConfig(){};
+    PlayPauseConfig(gpio_num_t btnNum) : BtCmdHandlerConfig(btnNum) {};
+};
+
+class BtPlayPauseHandler : public BtCmdHandler<PlayPauseConfig> {
+    public:
+    BtPlayPauseHandler(gpio_num_t btnNum);
+
+    protected:
+    using BtCmdHandler::handleEvent;
+    void handleEvent();
+
+    private:
+    static PlayPauseConfig generateConfig(gpio_num_t btnNum);
+};
 
 
 
- #define PULSE_CNT_IS_LOW() \
-    ((REG_GET_FIELD(RTC_GPIO_IN_REG, RTC_GPIO_IN_NEXT) \
-            & BIT(PULSE_CNT_RTC_GPIO_NUM)) == 0)
-
-typedef struct  s_deepsleep_config{
-    int pulse_button_num;
-}               deepsleep_config;
-
- void ds_gpio_config(int pulse_button_num);
+ #ifdef __cplusplus
+ extern "C" {
+ #endif
+ void play_pause_gpio_config(gpio_num_t pulse_button_num);
  #ifdef __cplusplus
  } //end extern "C"
  #endif
