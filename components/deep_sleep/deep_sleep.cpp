@@ -40,7 +40,7 @@
 #include "rom/ets_sys.h"
 
 #include "deep_sleep.h"
-
+extern "C" {
 // Pulse counter value, stored in RTC_SLOW_MEM
 static size_t RTC_DATA_ATTR s_pulse_count;
 static size_t RTC_DATA_ATTR s_max_pulse_count;
@@ -50,7 +50,7 @@ static void RTC_IRAM_ATTR wake_stub();
 
 static void deep_sleep(void *arg)
 {
-    deepsleep_config *config = arg;
+    deepsleep_config *config = (deepsleep_config *)arg;
 
     //printf("Pulse button identifier: %d\n", config->pulse_button_num);
 
@@ -127,15 +127,16 @@ static void RTC_IRAM_ATTR wake_stub()
    // Set the value
    gpio_config.pulse_button_num = pulse_button_num;
 
-  gpio_set_direction(pulse_button_num, GPIO_MODE_INPUT);
-  gpio_set_pull_mode(pulse_button_num, GPIO_PULLUP_ONLY);
-  gpio_set_intr_type(pulse_button_num, GPIO_INTR_NEGEDGE);
+  gpio_set_direction((gpio_num_t)pulse_button_num, GPIO_MODE_INPUT);
+  gpio_set_pull_mode((gpio_num_t)pulse_button_num, GPIO_PULLUP_ONLY);
+  gpio_set_intr_type((gpio_num_t)pulse_button_num, GPIO_INTR_NEGEDGE);
 
   printf("GPIO NUM: %d\n", pulse_button_num);
   gpio_install_isr_service(ESP_INTR_FLAG_DEFAULT);
   gpio_isr_handler_add(
-    pulse_button_num,
+    (gpio_num_t)pulse_button_num,
     &deep_sleep,
     &gpio_config
   );
+}
 }

@@ -6,7 +6,9 @@
  */
  #ifndef INCLUDE_DEEP_SLEEP_H_
  #define INCLUDE_DEEP_SLEEP_H_
-
+ #ifdef __cplusplus
+ extern "C" {
+ #endif
 
  #define ESP_INTR_FLAG_DEFAULT 0
 
@@ -29,6 +31,8 @@ typedef struct  s_deepsleep_config{
     int pulse_button_num;
 }               deepsleep_config;
 
-void ds_gpio_config(int pulse_button_num);
-
+ void ds_gpio_config(int pulse_button_num);
+ #ifdef __cplusplus
+ } //end extern "C"
+ #endif
  #endif
