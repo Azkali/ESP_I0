@@ -4,6 +4,7 @@
 #
 
 PROJECT_NAME := ESP_I0
+EXTRA_COMPONENT_DIRS := example
 
 COMPONENT_ADD_INCLUDEDIRS := components/include
 
