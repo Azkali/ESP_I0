@@ -1,0 +1,10 @@
+build/
+sdkconfig.old
+
+\.vscode/
+
+\.cproject
+
+\.project
+
+ESP_I0\.code-workspace
