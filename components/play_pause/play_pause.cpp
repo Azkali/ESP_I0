@@ -42,31 +42,11 @@
 #include "bt_app_av.h"
 #include "esp_log.h"
 
-template <typename T>
-BtCmdHandler<T>::BtCmdHandler(T _config){
-	_config = _config;
-
-	gpio_set_direction((gpio_num_t)_config.pulse_button_num, GPIO_MODE_INPUT);
-	gpio_set_pull_mode((gpio_num_t)_config.pulse_button_num, GPIO_PULLUP_ONLY);
-	gpio_set_intr_type((gpio_num_t)_config.pulse_button_num, GPIO_INTR_NEGEDGE);
-
-	printf("GPIO NUM: %d\n", _config.pulse_button_num);
-	gpio_isr_handler_add(
-		(gpio_num_t)(_config.pulse_button_num),
-		(gpio_isr_t)(BtCmdHandler<T>::handleEvent),
-		this
-	);
-}
-template <typename T>
-void BtCmdHandler<T>::handleEvent(BtCmdHandler<T> *_this) {
-	_this->handleEvent();
-}
-
-
 
 BtPlayPauseHandler::BtPlayPauseHandler(gpio_num_t btnNum)
-: BtCmdHandler(generateConfig(btnNum)) {
+: BtCmdHandler<PlayPauseConfig, BtPlayPauseHandler>(generateConfig(btnNum)) {
 }
+
 void BtPlayPauseHandler::handleEvent() {
 	ESP_LOGI("tag", "Hello");
 }
@@ -81,9 +61,10 @@ PlayPauseConfig BtPlayPauseHandler::generateConfig(gpio_num_t btnNum){
 
 extern "C" {
 
- 
+ BtPlayPauseHandler *ppHandler = NULL;
+
 void play_pause_gpio_config(gpio_num_t pulseButtonNum) {
-	BtPlayPauseHandler ppHandler = BtPlayPauseHandler(pulseButtonNum);
+	ppHandler = new BtPlayPauseHandler(pulseButtonNum);
 	// Set the value
 	/*
 	gpio_config.pulse_button_num = pulseButtonNum;

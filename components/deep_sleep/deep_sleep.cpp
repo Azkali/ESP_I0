@@ -48,7 +48,7 @@ static size_t RTC_DATA_ATTR s_max_pulse_count;
 // Function which runs after exit from deep sleep
 static void RTC_IRAM_ATTR wake_stub();
 
-static void deep_sleep(void *arg)
+/*static void deep_sleep(void *arg)
 {
     deepsleep_config *config = (deepsleep_config *)arg;
 
@@ -67,7 +67,7 @@ static void deep_sleep(void *arg)
 
     // Enter deep sleep
     esp_deep_sleep_start();
-}
+}*/
 
 static const char RTC_RODATA_ATTR wake_fmt_str[] = "Sleeping... Good Night.. Zzzz!\nClick to wake up\n"; //= %d\n";
 static const char RTC_RODATA_ATTR sleep_fmt_str[] = "Waking Up!\n";
@@ -121,8 +121,27 @@ static void RTC_IRAM_ATTR wake_stub()
     // never reaches here.
 }
 
- void ds_gpio_config(int pulse_button_num) {
-   // Allocate a static variable
+DeepSleepHandler::DeepSleepHandler(gpio_num_t btnNum)
+: BtCmdHandler<DeepSleepConfig, DeepSleepHandler>(generateConfig(btnNum)) {
+}
+
+void DeepSleepHandler::handleEvent() {
+	ESP_LOGI("tag", "Hello");
+}
+
+DeepSleepConfig DeepSleepHandler::generateConfig(gpio_num_t btnNum){
+	DeepSleepConfig config = {
+		btnNum
+	};
+	return config;
+}
+
+ static DeepSleepHandler *dsHandler = NULL;
+ 
+ void ds_gpio_config(gpio_num_t pulseButtonNum) {
+     dsHandler = new DeepSleepHandler(pulseButtonNum);
+   
+   /*// Allocate a static variable
    static deepsleep_config gpio_config = {.pulse_button_num = 0};
    // Set the value
    gpio_config.pulse_button_num = pulse_button_num;
@@ -137,6 +156,6 @@ static void RTC_IRAM_ATTR wake_stub()
     (gpio_num_t)pulse_button_num,
     &deep_sleep,
     &gpio_config
-  );
+  );*/
 }
 }
