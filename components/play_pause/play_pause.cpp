@@ -28,8 +28,6 @@
 #include "esp_attr.h"
 #include "rom/rtc.h"
 #include "rom/ets_sys.h"
-#include "freertos/FreeRTOS.h"
-#include "freertos/task.h"
 #include "soc/rtc_cntl_reg.h"
 #include "soc/rtc_io_reg.h"
 #include "soc/uart_reg.h"
@@ -43,37 +41,33 @@
 #include "esp_log.h"
 
 
-BtPlayPauseHandler::BtPlayPauseHandler(gpio_num_t btnNum)
-: BtCmdHandler<PlayPauseConfig, BtPlayPauseHandler>(generateConfig(btnNum)) {
+//extern "C" {
+BtnPlayPauseHandler::BtnPlayPauseHandler(gpio_num_t pulseButtonNum)
+: SimpleBtnCmdHandler(pulseButtonNum) {
 }
 
-void BtPlayPauseHandler::handleEvent() {
-	ESP_LOGI("tag", "Hello");
-}
-
-PlayPauseConfig BtPlayPauseHandler::generateConfig(gpio_num_t btnNum){
-	PlayPauseConfig config = {
-		btnNum
-	};
-	return config;
+void BtnPlayPauseHandler::handleEvent() {
+	ESP_LOGI("tag", "Btn Play Pause triggered");
 }
 
 
-extern "C" {
 
- BtPlayPauseHandler *ppHandler = NULL;
+
+ BtnPlayPauseHandler *ppHandler = NULL;
 
 void play_pause_gpio_config(gpio_num_t pulseButtonNum) {
-	ppHandler = new BtPlayPauseHandler(pulseButtonNum);
+	ppHandler = new BtnPlayPauseHandler(pulseButtonNum);
+	//ppHandler->buttonBind();
+	//BtnCmdHandler<BtnCmdHandlerConfig>::handleEventBetter(ppHandler);
 	// Set the value
-	/*
-	gpio_config.pulse_button_num = pulseButtonNum;
+	/*gpio_config.pulse_button_num = pulseButtonNum;*/
 
-	gpio_set_direction((gpio_num_t)pulseButtonNum, GPIO_MODE_INPUT);
+	/*gpio_set_direction((gpio_num_t)pulseButtonNum, GPIO_MODE_INPUT);
 	gpio_set_pull_mode((gpio_num_t)pulseButtonNum, GPIO_PULLUP_ONLY);
 	gpio_set_intr_type((gpio_num_t)pulseButtonNum, GPIO_INTR_NEGEDGE);
 
-	printf("GPIO NUM: %d\n", pulseButtonNum);
+	printf("GPIO NUM: %d\n", pulseButtonNum);*/
+	/*
 	gpio_isr_handler_add(
 		(gpio_num_t)pulseButtonNum,
 		(gpio_isr_t)esp_avrc_ct_send_passthrough_cmd(0, ESP_AVRC_PT_CMD_PAUSE, 0),
@@ -81,4 +75,4 @@ void play_pause_gpio_config(gpio_num_t pulseButtonNum) {
 	);
 */	
 }
-}
+//}

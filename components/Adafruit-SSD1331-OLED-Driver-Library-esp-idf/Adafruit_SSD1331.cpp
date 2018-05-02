@@ -33,6 +33,7 @@ extern "C" {
 #include <freertos/task.h>
 #include <stdlib.h>
 #include <string.h>
+#include <string>
 
 #include "Adafruit_GFX.h"
 #include "sdkconfig.h"
@@ -240,6 +241,8 @@ void Adafruit_SSD1331::drawRect(int16_t x, int16_t y, int16_t w, int16_t h, uint
   // Delay while the fill completes
   vTaskDelay(SSD1331_DELAYS_HWFILL/portTICK_PERIOD_MS);
 }
+*/
+
 
 void Adafruit_SSD1331::setScrolling(int16_t hOffset, int16_t x0, int16_t hScroll, int16_t vScroll, uint16_t interval) {
 	  writeCommand(SSD1331_CMD_SCROLLING);
@@ -250,26 +253,37 @@ void Adafruit_SSD1331::setScrolling(int16_t hOffset, int16_t x0, int16_t hScroll
 	  writeCommand(interval);
 	  vTaskDelay(SSD1331_DELAYS_HWFILL/portTICK_PERIOD_MS);
 }
-*/
+
+void Adafruit_SSD1331::ScrollSet(int8_t horizontal, int8_t startline, int8_t linecount, int8_t vertical , int8_t frame_interval)
+{
+    if((startline>TFTHEIGHT+1)||((startline+linecount)>TFTHEIGHT+1)) return ;
+    if ( frame_interval > 3 ) frame_interval = 3;
+    writeCommand(SSD1331_CMD_SCROLLING);
+    writeCommand(horizontal);
+    writeCommand(startline);
+    writeCommand(linecount);
+    writeCommand(vertical);
+    writeCommand(frame_interval);
+	  vTaskDelay(SSD1331_DELAYS_HWFILL/portTICK_PERIOD_MS);
+}
+
 void Adafruit_SSD1331::clearScreen() {
 	clearWindow(0, 0, WIDTH-1, HEIGHT-1);
 	vTaskDelay(SSD1331_DELAYS_HWFILL/portTICK_PERIOD_MS);
 }
-/*
+
 void Adafruit_SSD1331::scroll(bool scroll) {
 	if(scroll)
 		writeCommand(SSD1331_CMD_SCROLLON);
 	else
 		writeCommand(SSD1331_CMD_SCROLLOFF);
 }
-*/
 void Adafruit_SSD1331::clearWindow(int16_t x0, int16_t y0, int16_t x1, int16_t y1){
 	writeCommand(SSD1331_CMD_CLEARWINDOW);
 	writeCommand(x0);
 	writeCommand(y0);
 	writeCommand(x1);
 	writeCommand(y1);
-
 	vTaskDelay(SSD1331_DELAYS_HWFILL/portTICK_PERIOD_MS);
 }
 /*

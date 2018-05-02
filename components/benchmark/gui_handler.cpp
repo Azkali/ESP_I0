@@ -28,7 +28,7 @@ void GuiHandler::setDisplay(DISP_DESC *disp){
 	display = disp;
 	y0 = display->height()/2;
 }
-
+/*
 void GuiHandler::testText() {
 
 	display->setCursor(0, 0);
@@ -48,7 +48,7 @@ void GuiHandler::testText() {
 	display->setTextColor(BLUE);
 	println((char*) "FULL COLOR!");
 	println((char*) "");
-}
+}*/
 
 void GuiHandler::welcomeScreen() {
 	display->setCursor(0, 0);
@@ -90,78 +90,68 @@ GuiHandler *GuiHandler::setAlbum(string _album) {
 	this->album = new string(_album);
 	return this;
 }
-GuiHandler *GuiHandler::setGenre(string _genre) {
-	this->genre = new string(_genre);
-	return this;
-}
-
 
 GuiHandler *GuiHandler::refreshTitle(){
-	this->refreshRow(POS_TITLE, title, YELLOW);
+	//scrollLine(title);
+	this->refreshRow(POS_TITLE, title, RED);
+	//scrollLine(title);
 	return this;
 }
 
 GuiHandler *GuiHandler::refreshArtist(){
-	this->refreshRow(POS_ARTIST, artist, YELLOW);
+	//scrollLine(artist);
+	this->refreshRow(POS_ARTIST, artist, YELLOW);	
+	//scrollLine(artist);
 	return this;
 }
 
 GuiHandler *GuiHandler::refreshAlbum(){
-	this->refreshRow(POS_ALBUM, album, YELLOW);
+	//scrollLine(album);
+	this->refreshRow(POS_ALBUM, album, CYAN);
+	//scrollLine(album);
 	return this;
 }
 
-GuiHandler *GuiHandler::refreshGenre(){
-	this->refreshRow(POS_GENRE, genre, YELLOW);
+
+GuiHandler *GuiHandler::scrollLine(string *line) {
+	display->ScrollSet(12,0,POS_ALBUM,0,20);
+	display->scroll(line->c_str());
 	return this;
-}
+}	
 
 GuiHandler *GuiHandler::refreshScreen(){
 	refreshTitle();
 	refreshArtist();
-	refreshAlbum();
-	return refreshGenre();
+	return refreshAlbum();
 	 
 }
+
+/*void GuiHandler::scrollLineSec(string *line) {
+	int16_t x1,y1,x2,y2,width;
+	display->getTextBounds(line, 0, 0, &x1, &y1, &x2, &y2);
+	width=x2-x1;
+}*/
 
 void GuiHandler::refreshRow(int16_t posx, string *datdata, color_t color){
 	display->clearWindow(0, posx, display->width(), posx + INTERLINE);
 	display->setCursor(0, posx + 2);
 	display->setTextColor(color);
 	display->setTextSize(1);
+	display->setTextWrap(false);
 	char *newStr = strdup(datdata->c_str());
+	//drawString(newStr);
 	println(newStr);
+	printf(newStr);
 	free(newStr);
-
 }
 
-/*
-GuiHandler gui;
+void GuiHandler::drawString(const char *string) {
+    if(string!=NULL) {
+		while(*string)
+			display->write(*string++);
+    }
+}
 
-void GuiHandler::musicScreen(char *attr) {
-	display->clearScreen();
-	display->setCursor(0, 0);
-	display->setTextColor(WHITE);
-	display->setTextSize(1);
-	println((char*) "Music Library");
-	display->setCursor(0, display->getCursorY() + 8);
-	display->setTextColor(YELLOW);
-	display->setTextSize(1);
-	if(attr != NULL) println(attr); else println("Song");
-	display->setCursor(0, display->getCursorY() + 9);
-	display->setTextColor(YELLOW);
-	display->setTextSize(1);
-	println((char*) "-Artist-Album");
-	display->setCursor(0, display->getCursorY() + 12);
-	display->setTextColor(RED);
-	display->setTextSize(1);
-	println((char*) "0:00-X:XX");
-	display->setCursor(0, display->getCursorY() + 15);
-	display->setTextSize(1);
-	display->setTextColor(BLUE);
-	println((char*) "Back/Play\nPause/Forward");
-	println((char*) "");
-}*/
 void GuiHandler::println (char* text){
 	while(*text != 0) {
 		display->write(*text);
@@ -169,6 +159,8 @@ void GuiHandler::println (char* text){
 	}
 }
 
+
+/*
 void GuiHandler::testFastLines() {
 
 }
@@ -277,4 +269,4 @@ void GuiHandler::testBox3d() {
 		display->drawLine(x0+r, y0-r+i+10, x+2*r, y+i, GREEN);
 	}
 
-}
+}*/

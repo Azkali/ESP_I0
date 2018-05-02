@@ -7,30 +7,22 @@
  #ifndef INCLUDE_DEEP_SLEEP_H_
  #define INCLUDE_DEEP_SLEEP_H_
 
-
- #define ESP_INTR_FLAG_DEFAULT 0
-
  // Pin used for pulse counting
  // GPIO33 is RTC_GPIO08 (see esp32_chip_pin_list_en.pdf)
- #define PULSE_CNT_GPIO_NUM_33 (gpio_num_t)33
- #define PULSE_CNT_RTC_GPIO_NUM 8
+ #define PULSE_CNT_GPIO_NUM_33 GPIO_NUM_12
+ #define PULSE_CNT_RTC_GPIO_NUM (gpio_num_t)8
  #include "btnCmdHandler.h"
 
-struct DeepSleepConfig : BtCmdHandlerConfig {
+struct DeepSleepConfig : public BtnCmdHandlerConfig {
     public:
-    DeepSleepConfig(): BtCmdHandlerConfig(){};
-    DeepSleepConfig(gpio_num_t btnNum) : BtCmdHandlerConfig(btnNum) {};
+    DeepSleepConfig(): BtnCmdHandlerConfig(){};
+    DeepSleepConfig(gpio_num_t btnNum) : BtnCmdHandlerConfig(btnNum) {};
 };
 
-class DeepSleepHandler : public BtCmdHandler<DeepSleepConfig, DeepSleepHandler> {
+class DeepSleepHandler : public SimpleBtnCmdHandler {
     public:
-    DeepSleepHandler(gpio_num_t btnNum);
+    DeepSleepHandler(gpio_num_t pulseButtonNum);
     void handleEvent();
-
-    protected:
-
-    private:
-    static DeepSleepConfig generateConfig(gpio_num_t btnNum);
 };
 
 

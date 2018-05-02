@@ -30,12 +30,12 @@ void ssd1331_test(void *ignore) {
 
 	gui.setDisplay(&disp);
 	gui.welcomeScreen();
-	vTaskDelay(1000);
+	vTaskDelay(100);
 	disp.clearScreen();
 	disp.clearScreen();
-	/*gui.musicScreen(NULL);*/
-	/*while(1){
-	}*/
+	
 	ESP_LOGD(tag, "<< exit point ssd1331_final");
 	vTaskDelete(NULL);
 }
+
+ 

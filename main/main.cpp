@@ -16,7 +16,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
-#include "freertos/FreeRTOS.h"
+#include "FreeRTOS.h"
 #include "freertos/task.h"
 #include "nvs.h"
 #include "nvs_flash.h"
@@ -32,16 +32,19 @@
 #include "esp_a2dp_api.h"
 #include "esp_avrc_api.h"
 #include "driver/i2s.h"
-#include "driver/gpio.h"
+#include "GPIO.h"
 
-#include "deep_sleep.h"
-#include "play_pause.h"
+//#include "deep_sleep.h"
+//#include "play_pause.h"
 
 #include "sdkconfig.h"
 #include "esp_event.h"
 #include "esp_event_loop.h"
 #include "esp_avrc_api.h"
 
+extern "C"{
+void app_main();
+}
 
 /* event handler for OLED screen */
 esp_err_t event_handler(void *ctx, system_event_t *event)
@@ -59,7 +62,7 @@ enum {
 /* handler for bluetooth stack enabled events */
 static void bt_av_hdl_stack_evt(uint16_t event, void *p_param);
 
-extern "C" void app_main()
+void app_main()
 {
     /* Initialize NVS — it is used to store PHY calibration data */
     esp_err_t ret = nvs_flash_init();
@@ -132,15 +135,17 @@ extern "C" void app_main()
     bt_app_work_dispatch(bt_av_hdl_stack_evt, BT_APP_EVT_STACK_UP, NULL, 0, NULL);
 
     /* Deep-sleep Function */
-    ds_gpio_config(PULSE_CNT_GPIO_NUM_33);
+    // ds_gpio_config(PULSE_CNT_GPIO_NUM_33);
 
-    /* Play/Pause function*/
-    play_pause_gpio_config(PULSE_CNT_GPIO_NUM_12);
+    /* Play/Pause function */
+    // play_pause_gpio_config(PULSE_CNT_GPIO_NUM_12);
 
     /* OLED Launch*/
     ESP_LOGI("tag", ">> app_main");
     xTaskCreatePinnedToCore(&ssd1331_test, "ssd1331_final", 8048, NULL, 5, NULL, 0);
     ESP_LOGI("tag", ">> app_main");
+
+
 }
 
 

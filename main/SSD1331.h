@@ -87,9 +87,9 @@ public:
 //	  void drawLine(int16_t x0, int16_t y0, int16_t x1, int16_t y1, uint16_t color);
 //	  void fillRect(int16_t x, int16_t y, int16_t w, int16_t h, uint16_t color);
 /*	  void drawRect(int16_t x, int16_t y, int16_t w, int16_t h, uint16_t color);
-	  void pushColor(uint16_t c);
+	  void pushColor(uint16_t c);*/
 	  void setScrolling(int16_t hOffset, int16_t x0, int16_t hScroll, int16_t vScroll, uint16_t interval);
-	  void scroll(bool scroll);*/
+	  void scroll(bool scroll);
 	  void clearWindow(int16_t x0, int16_t y0, int16_t x1, int16_t y1);
 	  void clearScreen();
 

@@ -191,6 +191,7 @@ void SSD1331::drawRect(int16_t x, int16_t y, int16_t w, int16_t h, uint16_t fill
   // Delay while the fill completes
   vTaskDelay(SSD1331_DELAYS_HWFILL/portTICK_PERIOD_MS);
 }
+*/
 
 void SSD1331::setScrolling(int16_t hOffset, int16_t x0, int16_t hScroll, int16_t vScroll, uint16_t interval) {
 	  writeCommand(SSD1331_CMD_SCROLLING);
@@ -201,18 +202,17 @@ void SSD1331::setScrolling(int16_t hOffset, int16_t x0, int16_t hScroll, int16_t
 	  writeCommand(interval);
 	  vTaskDelay(SSD1331_DELAYS_HWFILL/portTICK_PERIOD_MS);
 }
-*/
 void SSD1331::clearScreen() {
 	clearWindow(0, 0, WIDTH-1, HEIGHT-1);
 }
-/*
+
 void SSD1331::scroll(bool scroll) {
 	if(scroll)
 		writeCommand(SSD1331_CMD_SCROLLON);
 	else
 		writeCommand(SSD1331_CMD_SCROLLOFF);
 }
-*/
+
 void SSD1331::clearWindow(int16_t x0, int16_t y0, int16_t x1, int16_t y1){
 	writeCommand(SSD1331_CMD_CLEARWINDOW);
 	writeCommand(x0);

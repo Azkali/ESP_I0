@@ -11,7 +11,7 @@
 
 #include <string>
 #include <string.h>
-
+#include "esp_log.h"
 
 using namespace std;
 
@@ -27,7 +27,6 @@ using namespace std;
 #define POS_TITLE INTERLINE
 #define POS_ARTIST POS_TITLE + INTERLINE
 #define POS_ALBUM POS_ARTIST + INTERLINE
-#define POS_GENRE POS_ALBUM + INTERLINE
 
 typedef uint16_t color_t;
 
@@ -49,17 +48,16 @@ public:
 	GuiHandler *refreshTitle();
 	GuiHandler *refreshArtist();
 	GuiHandler *refreshAlbum();
-	GuiHandler *refreshGenre();
 	GuiHandler *refreshScreen();
 	GuiHandler *setTitle(string _title);
 	GuiHandler *setArtist(string _artist);
 	GuiHandler *setAlbum(string _album);
-	GuiHandler *setGenre(string _genre);
-
+	GuiHandler *scrollLine(string *line);
 
 private:
 	void refreshRow(int16_t posx, string *datdata, color_t color);
-	void println(char*);
+	void println(char *text);
+	void drawString(const char *string);
 	
 	DISP_DESC *display;
 	uint16_t x0, y0;

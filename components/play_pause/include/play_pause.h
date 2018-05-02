@@ -7,28 +7,22 @@
  #ifndef INCLUDE_PLAY_PAUSE_H_
  #define INCLUDE_PLAY_PAUSE_H_
 
- #define ESP_INTR_FLAG_DEFAULT 0
-
  // Pin used for pulse counting
  // GPIO33 is RTC_GPIO08 (see esp32_chip_pin_list_en.pdf)
- #define PULSE_CNT_GPIO_NUM_12 (gpio_num_t)12
+ #define PULSE_CNT_GPIO_NUM_12 GPIO_NUM_33
  #include "btnCmdHandler.h"
 
-struct PlayPauseConfig : BtCmdHandlerConfig {
+struct PlayPauseConfig : public BtnCmdHandlerConfig {
     public:
-    PlayPauseConfig(): BtCmdHandlerConfig(){};
-    PlayPauseConfig(gpio_num_t btnNum) : BtCmdHandlerConfig(btnNum) {};
+    PlayPauseConfig(): BtnCmdHandlerConfig(){};
+    PlayPauseConfig(gpio_num_t btnNum) : BtnCmdHandlerConfig(btnNum) {};
 };
 
-class BtPlayPauseHandler : public BtCmdHandler<PlayPauseConfig, BtPlayPauseHandler> {
+
+class BtnPlayPauseHandler : public SimpleBtnCmdHandler {
     public:
-    BtPlayPauseHandler(gpio_num_t btnNum);
+    BtnPlayPauseHandler(gpio_num_t pulseButtonNum);
     void handleEvent();
-
-    protected:
-
-    private:
-    static PlayPauseConfig generateConfig(gpio_num_t btnNum);
 };
 
 

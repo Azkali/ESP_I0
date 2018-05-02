@@ -12,6 +12,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <string>
 #include "esp_log.h"
 
 #include "bt_app_core.h"
@@ -196,29 +197,28 @@ static void bt_av_hdl_avrc_evt(uint16_t event, void *p_param)
             case ESP_AVRC_MD_ATTR_TITLE:
                 gui
                 .setTitle(attrText)
-                ->refreshTitle();
+                //->scrollLine(&attrText)
+                ->refreshTitle()
+                ->scrollLine(&attrText);
                 break;
 
             case ESP_AVRC_MD_ATTR_ARTIST:
                 gui
                 .setArtist(attrText)
-                ->refreshArtist();
+                //->scrollLine(&attrText)
+                ->refreshArtist()
+                ->scrollLine(&attrText);
                 break;
 
             case ESP_AVRC_MD_ATTR_ALBUM:
                 gui
                 .setAlbum(attrText)
-                ->refreshAlbum();
+                //->scrollLine(&attrText)
+                ->refreshAlbum()
+                ->scrollLine(&attrText);
                 break;
 
-            case ESP_AVRC_MD_ATTR_GENRE:
-                gui
-                .setGenre(attrText)
-                ->refreshGenre();
-                break;
         }
-        /*gui.musicScreen((char*)rc->meta_rsp.attr_text);
-        free(rc->meta_rsp.attr_text);*/
         break;
     }
     case ESP_AVRC_CT_CHANGE_NOTIFY_EVT: {

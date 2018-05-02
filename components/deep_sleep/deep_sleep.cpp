@@ -28,8 +28,6 @@
 #include "esp_attr.h"
 #include "rom/rtc.h"
 #include "rom/ets_sys.h"
-#include "freertos/FreeRTOS.h"
-#include "freertos/task.h"
 #include "soc/rtc_cntl_reg.h"
 #include "soc/rtc_io_reg.h"
 #include "soc/uart_reg.h"
@@ -40,7 +38,8 @@
 #include "rom/ets_sys.h"
 
 #include "deep_sleep.h"
-extern "C" {
+
+//extern "C" {
 // Pulse counter value, stored in RTC_SLOW_MEM
 static size_t RTC_DATA_ATTR s_pulse_count;
 static size_t RTC_DATA_ATTR s_max_pulse_count;
@@ -48,7 +47,7 @@ static size_t RTC_DATA_ATTR s_max_pulse_count;
 // Function which runs after exit from deep sleep
 static void RTC_IRAM_ATTR wake_stub();
 
-/*static void deep_sleep(void *arg)
+/* static void deep_sleep(void *arg)
 {
     deepsleep_config *config = (deepsleep_config *)arg;
 
@@ -121,36 +120,35 @@ static void RTC_IRAM_ATTR wake_stub()
     // never reaches here.
 }
 
-DeepSleepHandler::DeepSleepHandler(gpio_num_t btnNum)
-: BtCmdHandler<DeepSleepConfig, DeepSleepHandler>(generateConfig(btnNum)) {
+
+
+
+
+
+DeepSleepHandler::DeepSleepHandler(gpio_num_t pulseButtonNum)
+: SimpleBtnCmdHandler(pulseButtonNum) {
 }
 
 void DeepSleepHandler::handleEvent() {
-	ESP_LOGI("tag", "Hello");
-}
-
-DeepSleepConfig DeepSleepHandler::generateConfig(gpio_num_t btnNum){
-	DeepSleepConfig config = {
-		btnNum
-	};
-	return config;
+	ESP_LOGD("tag", "Btn Deep Sleep triggered");
 }
 
  static DeepSleepHandler *dsHandler = NULL;
  
  void ds_gpio_config(gpio_num_t pulseButtonNum) {
-     dsHandler = new DeepSleepHandler(pulseButtonNum);
-   
-   /*// Allocate a static variable
-   static deepsleep_config gpio_config = {.pulse_button_num = 0};
+    dsHandler = new DeepSleepHandler(pulseButtonNum);
+   	dsHandler->buttonBind();
+    // Allocate a static variable
+   /*static deepsleep_config gpio_config = {.pulse_button_num = 0};
    // Set the value
    gpio_config.pulse_button_num = pulse_button_num;
 
-  gpio_set_direction((gpio_num_t)pulse_button_num, GPIO_MODE_INPUT);
-  gpio_set_pull_mode((gpio_num_t)pulse_button_num, GPIO_PULLUP_ONLY);
-  gpio_set_intr_type((gpio_num_t)pulse_button_num, GPIO_INTR_NEGEDGE);
-
-  printf("GPIO NUM: %d\n", pulse_button_num);
+   gpio_set_direction((gpio_num_t)pulseButtonNum, GPIO_MODE_INPUT);
+   gpio_set_pull_mode((gpio_num_t)pulseButtonNum, GPIO_PULLUP_ONLY);
+   gpio_set_intr_type((gpio_num_t)pulseButtonNum, GPIO_INTR_NEGEDGE);
+ 
+   printf("GPIO NUM: %d\n", pulseButtonNum);
+   
   gpio_install_isr_service(ESP_INTR_FLAG_DEFAULT);
   gpio_isr_handler_add(
     (gpio_num_t)pulse_button_num,
@@ -158,4 +156,4 @@ DeepSleepConfig DeepSleepHandler::generateConfig(gpio_num_t btnNum){
     &gpio_config
   );*/
 }
-}
+//}
