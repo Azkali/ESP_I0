@@ -44,6 +44,7 @@ public:
 	void testBox3d();
 	void welcomeScreen();
 	void musicScreen();
+	void Logo();
 	GuiHandler *refreshTitle();
 	GuiHandler *refreshArtist();
 	GuiHandler *refreshAlbum();

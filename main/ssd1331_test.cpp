@@ -29,10 +29,16 @@ void ssd1331_test(void *ignore) {
 	disp.setRotation(0);
 
 	gui.setDisplay(&disp);
+	gui.Logo();
+	vTaskDelay(1000);
+	disp.clearScreen();
+	disp.clearScreen();
+	
 	gui.welcomeScreen();
-	vTaskDelay(100);
+	vTaskDelay(1000);
 	disp.clearScreen();
 	disp.clearScreen();
+	gui.Logo();
 	
 	ESP_LOGD(tag, "<< exit point ssd1331_final");
 	vTaskDelete(NULL);

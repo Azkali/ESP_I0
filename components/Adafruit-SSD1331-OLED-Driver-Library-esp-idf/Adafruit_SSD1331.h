@@ -98,10 +98,10 @@ class Adafruit_SSD1331 : public virtual Adafruit_GFX {
 
   // drawing primitives!
   void drawPixel(int16_t x, int16_t y, uint16_t color);
-/*  void drawLine(int16_t x0, int16_t y0, int16_t x1, int16_t y1, uint16_t color);
+  void drawLine(int16_t x0, int16_t y0, int16_t x1, int16_t y1, uint16_t color);
   void fillRect(int16_t x, int16_t y, int16_t w, int16_t h, uint16_t color);
   void drawRect(int16_t x, int16_t y, int16_t w, int16_t h, uint16_t color);
-  void pushColor(uint16_t c);*/
+  void pushColor(uint16_t c);
   void setScrolling(int16_t hOffset, int16_t x0, int16_t hScroll, int16_t vScroll, uint16_t interval);
   void scroll(bool scroll);
   void ScrollSet(int8_t horizontal, int8_t startline, int8_t linecount, int8_t vertical , int8_t frame_interval); // set up scroll function

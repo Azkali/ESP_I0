@@ -70,6 +70,8 @@ class Adafruit_GFX  {
     getTextBounds(const char *s, int16_t x, int16_t y,
       int16_t *x1, int16_t *y1, uint16_t *w, uint16_t *h);
 
+
+
 #if ARDUINO >= 100
   virtual size_t write(uint8_t);
 #else

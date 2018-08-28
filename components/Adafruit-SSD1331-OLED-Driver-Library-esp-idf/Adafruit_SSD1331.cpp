@@ -121,7 +121,7 @@ uint16_t Adafruit_SSD1331::Color565(uint8_t r, uint8_t g, uint8_t b) {
     @brief  Draws a filled rectangle using HW acceleration
 */
 /**************************************************************************/
-/*
+
 void Adafruit_SSD1331::fillRect(int16_t x, int16_t y, int16_t w, int16_t h, uint16_t fillcolor)
 {
 //Serial.println("fillRect");
@@ -241,7 +241,6 @@ void Adafruit_SSD1331::drawRect(int16_t x, int16_t y, int16_t w, int16_t h, uint
   // Delay while the fill completes
   vTaskDelay(SSD1331_DELAYS_HWFILL/portTICK_PERIOD_MS);
 }
-*/
 
 
 void Adafruit_SSD1331::setScrolling(int16_t hOffset, int16_t x0, int16_t hScroll, int16_t vScroll, uint16_t interval) {
@@ -286,7 +285,7 @@ void Adafruit_SSD1331::clearWindow(int16_t x0, int16_t y0, int16_t x1, int16_t y
 	writeCommand(y1);
 	vTaskDelay(SSD1331_DELAYS_HWFILL/portTICK_PERIOD_MS);
 }
-/*
+
 void Adafruit_SSD1331::drawLine(int16_t x0, int16_t y0, int16_t x1, int16_t y1, uint16_t color) {	
   // check rotation, move pixel around if necessary
   switch (getRotation()) {
@@ -335,7 +334,7 @@ void Adafruit_SSD1331::drawLine(int16_t x0, int16_t y0, int16_t x1, int16_t y1, 
   writeCommand((uint8_t)((color << 1) & 0x3F));
   vTaskDelay(SSD1331_DELAYS_HWLINE/portTICK_PERIOD_MS);
 }
-//*/
+
 void Adafruit_SSD1331::drawPixel(int16_t x, int16_t y, uint16_t color)
 {
   if ((x < 0) || (x >= width()) || (y < 0) || (y >= height())) return;
