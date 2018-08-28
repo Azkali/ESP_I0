@@ -9,4 +9,3 @@ EXTRA_COMPONENT_DIRS := example
 COMPONENT_ADD_INCLUDEDIRS := components/include
 
 include $(IDF_PATH)/make/project.mk
-

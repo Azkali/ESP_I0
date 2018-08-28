@@ -108,6 +108,7 @@ class Adafruit_SSD1331 : public virtual Adafruit_GFX {
   void clearWindow(int16_t x0, int16_t y0, int16_t x1, int16_t y1);
   void clearScreen();
 
+
   // commands
   void begin(void);
   void goHome(void);

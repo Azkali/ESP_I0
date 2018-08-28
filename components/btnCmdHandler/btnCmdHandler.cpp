@@ -22,8 +22,8 @@ void BtnCmdHandler<Tconfig, Tinherit>::buttonBind() {
 
 
 	void (*bindHandle)(Tinherit *) = &Tinherit::handleEventBetter;
-	printf("Handler pointer: %p\n", bindHandle);
-//	BtnCmdHandler::handleEventBetter(static_cast<Tinherit*>(this));
+	ESP_LOGI("tag", "Handler pointer: %p\n", bindHandle);
+	BtnCmdHandler::handleEventBetter(static_cast<Tinherit*>(this));
 	gpio_isr_handler_add(
 		pbnum,
 		(gpio_isr_t)(bindHandle),
@@ -33,8 +33,7 @@ void BtnCmdHandler<Tconfig, Tinherit>::buttonBind() {
 
 template <typename Tconfig, class Tinherit>
 void BtnCmdHandler<Tconfig, Tinherit>::handleEventBetter(Tinherit *_this) {
-	ESP_LOGI("tag", "Tiggered event on button: %d\n", _this->config.pulse_button_num);
-	//printf("Handler pointer: %p\n", (void*)&_this->handleEvent);
+	//ESP_LOGI("tag", "Tiggered event on button: %d\n", _this->config.pulse_button_num);
 	_this->handleEvent();
 }
 

@@ -130,7 +130,7 @@ DeepSleepHandler::DeepSleepHandler(gpio_num_t pulseButtonNum)
 }
 
 void DeepSleepHandler::handleEvent() {
-	ESP_LOGD("tag", "Btn Deep Sleep triggered");
+	ESP_LOGI("tag", "Btn Deep Sleep triggered");
 }
 
  static DeepSleepHandler *dsHandler = NULL;
@@ -157,3 +157,15 @@ void DeepSleepHandler::handleEvent() {
   );*/
 }
 //}
+/*
+ ESP32CPP::GPIO dsHandler;
+ 
+ void ds_gpio_config(gpio_num_t ButtonNum) {
+     
+    dsHandler.setInput(ButtonNum);
+    gpio_set_pull_mode((gpio_num_t)ButtonNum, GPIO_PULLUP_ONLY);
+    dsHandler.setInterruptType(ButtonNum, GPIO_INTR_NEGEDGE);
+
+    printf("GPIO NUM: %d\n", ButtonNum);
+    dsHandler.addISRHandler(ButtonNum, (gpio_isr_t)&deep_sleep, NULL);
+ }*/

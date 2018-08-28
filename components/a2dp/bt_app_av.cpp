@@ -191,13 +191,13 @@ static void bt_av_hdl_avrc_evt(uint16_t event, void *p_param)
     }
     case ESP_AVRC_CT_METADATA_RSP_EVT: {
         ESP_LOGI(BT_AV_TAG, "AVRC metadata rsp: attribute id 0x%x, %s", rc->meta_rsp.attr_id, rc->meta_rsp.attr_text);
-
+        /* Get metadata for title, artist, album 
+        and refresh when track change */
         string attrText((char*)rc->meta_rsp.attr_text);
         switch(rc->meta_rsp.attr_id) {
             case ESP_AVRC_MD_ATTR_TITLE:
                 gui
                 .setTitle(attrText)
-                //->scrollLine(&attrText)
                 ->refreshTitle()
                 ->scrollLine(&attrText);
                 break;
@@ -205,7 +205,6 @@ static void bt_av_hdl_avrc_evt(uint16_t event, void *p_param)
             case ESP_AVRC_MD_ATTR_ARTIST:
                 gui
                 .setArtist(attrText)
-                //->scrollLine(&attrText)
                 ->refreshArtist()
                 ->scrollLine(&attrText);
                 break;
@@ -213,7 +212,6 @@ static void bt_av_hdl_avrc_evt(uint16_t event, void *p_param)
             case ESP_AVRC_MD_ATTR_ALBUM:
                 gui
                 .setAlbum(attrText)
-                //->scrollLine(&attrText)
                 ->refreshAlbum()
                 ->scrollLine(&attrText);
                 break;

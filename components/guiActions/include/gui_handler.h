@@ -39,7 +39,6 @@ public:
 	void testLines();
 	void testFastLines();
 	void drawClock();
-	void testText();
 	void testRectangles(int alpha);
 	void testRectangles2(int alpha);
 	void testBox3d();
@@ -57,7 +56,6 @@ public:
 private:
 	void refreshRow(int16_t posx, string *datdata, color_t color);
 	void println(char *text);
-	void drawString(const char *string);
 	
 	DISP_DESC *display;
 	uint16_t x0, y0;

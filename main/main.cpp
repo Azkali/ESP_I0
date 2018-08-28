@@ -16,7 +16,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
-#include "FreeRTOS.h"
+#include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 #include "nvs.h"
 #include "nvs_flash.h"
@@ -32,7 +32,7 @@
 #include "esp_a2dp_api.h"
 #include "esp_avrc_api.h"
 #include "driver/i2s.h"
-#include "GPIO.h"
+#include "driver/gpio.h"
 
 //#include "deep_sleep.h"
 //#include "play_pause.h"
@@ -135,7 +135,7 @@ void app_main()
     bt_app_work_dispatch(bt_av_hdl_stack_evt, BT_APP_EVT_STACK_UP, NULL, 0, NULL);
 
     /* Deep-sleep Function */
-    // ds_gpio_config(PULSE_CNT_GPIO_NUM_33);
+    //ds_gpio_config(PULSE_CNT_GPIO_NUM_33);
 
     /* Play/Pause function */
     // play_pause_gpio_config(PULSE_CNT_GPIO_NUM_12);

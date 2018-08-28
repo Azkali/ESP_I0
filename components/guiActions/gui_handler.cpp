@@ -28,27 +28,7 @@ void GuiHandler::setDisplay(DISP_DESC *disp){
 	display = disp;
 	y0 = display->height()/2;
 }
-/*
-void GuiHandler::testText() {
 
-	display->setCursor(0, 0);
-	display->setTextColor(WHITE);
-	display->setTextSize(1);
-	println((char*) "Hello World!");
-	display->setCursor(0, display->getCursorY() + 8);
-	display->setTextColor(YELLOW);
-	display->setTextSize(2);
-	println((char*) "1234.56");
-	display->setCursor(0, display->getCursorY() + 15);
-	display->setTextColor(RED);
-	display->setTextSize(3);
-	println((char*) "ESP32");
-	display->setCursor(0, display->getCursorY() + 23);
-	display->setTextSize(1);
-	display->setTextColor(BLUE);
-	println((char*) "FULL COLOR!");
-	println((char*) "");
-}*/
 
 void GuiHandler::welcomeScreen() {
 	display->setCursor(0, 0);
@@ -58,15 +38,15 @@ void GuiHandler::welcomeScreen() {
 	display->setCursor(0, display->getCursorY() + 8);
 	display->setTextColor(YELLOW);
 	display->setTextSize(1);
-	println((char*) "Listen to your");
+	println((char*) "Modularity");
 	display->setCursor(0, display->getCursorY() + 9);
 	display->setTextColor(YELLOW);
 	display->setTextSize(1);
-	println((char*) "library anywhere");
+	println((char*) "in the palm of your hand");
 	display->setCursor(0, display->getCursorY() + 10);
 	display->setTextColor(YELLOW);
 	display->setTextSize(1);
-	println((char*) "without wires!");
+	println((char*) "anywhere !");
 	display->setCursor(0, display->getCursorY() + 11);
 	display->setTextColor(RED);
 	display->setTextSize(1);
@@ -92,30 +72,24 @@ GuiHandler *GuiHandler::setAlbum(string _album) {
 }
 
 GuiHandler *GuiHandler::refreshTitle(){
-	//scrollLine(title);
 	this->refreshRow(POS_TITLE, title, RED);
-	//scrollLine(title);
 	return this;
 }
 
 GuiHandler *GuiHandler::refreshArtist(){
-	//scrollLine(artist);
 	this->refreshRow(POS_ARTIST, artist, YELLOW);	
-	//scrollLine(artist);
 	return this;
 }
 
 GuiHandler *GuiHandler::refreshAlbum(){
-	//scrollLine(album);
 	this->refreshRow(POS_ALBUM, album, CYAN);
-	//scrollLine(album);
 	return this;
 }
 
 
 GuiHandler *GuiHandler::scrollLine(string *line) {
-	display->ScrollSet(12,0,POS_ALBUM,0,20);
-	display->scroll(line->c_str());
+	display->ScrollSet(12,0,display->TFTHEIGHT,0,10);
+	display->scroll(line);
 	return this;
 }	
 
@@ -126,12 +100,6 @@ GuiHandler *GuiHandler::refreshScreen(){
 	 
 }
 
-/*void GuiHandler::scrollLineSec(string *line) {
-	int16_t x1,y1,x2,y2,width;
-	display->getTextBounds(line, 0, 0, &x1, &y1, &x2, &y2);
-	width=x2-x1;
-}*/
-
 void GuiHandler::refreshRow(int16_t posx, string *datdata, color_t color){
 	display->clearWindow(0, posx, display->width(), posx + INTERLINE);
 	display->setCursor(0, posx + 2);
@@ -139,17 +107,8 @@ void GuiHandler::refreshRow(int16_t posx, string *datdata, color_t color){
 	display->setTextSize(1);
 	display->setTextWrap(false);
 	char *newStr = strdup(datdata->c_str());
-	//drawString(newStr);
 	println(newStr);
-	printf(newStr);
 	free(newStr);
-}
-
-void GuiHandler::drawString(const char *string) {
-    if(string!=NULL) {
-		while(*string)
-			display->write(*string++);
-    }
 }
 
 void GuiHandler::println (char* text){

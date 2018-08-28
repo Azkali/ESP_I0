@@ -12,7 +12,7 @@
  #define PULSE_CNT_GPIO_NUM_33 GPIO_NUM_12
  #define PULSE_CNT_RTC_GPIO_NUM (gpio_num_t)8
  #include "btnCmdHandler.h"
-
+ #include "driver/gpio.h"
 struct DeepSleepConfig : public BtnCmdHandlerConfig {
     public:
     DeepSleepConfig(): BtnCmdHandlerConfig(){};

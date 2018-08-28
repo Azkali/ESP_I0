@@ -6,10 +6,10 @@
  */
   #ifndef INCLUDE_BTN_CMD_HANDLER_H_
  #define INCLUDE_BTN_CMD_HANDLER_H_
- #include "GPIO.h"
+ #include "driver/gpio.h"
  #include "esp_log.h"
-
- #include "FreeRTOS.h"
+ 
+ #include "freertos/FreeRTOS.h"
  #include "freertos/task.h"
 
  #define ESP_INTR_FLAG_DEFAULT 0
