@@ -14,50 +14,6 @@
 #include "esp_avrc_api.h"
 
 
-
-GuiHandler::GuiHandler(DISP_DESC *disp) {
-	display = disp;
-	x0 = 25; //display->width()/2;
-
-	if(disp != NULL){
-		y0 = display->height()/2;
-	}
-}
-
-void GuiHandler::setDisplay(DISP_DESC *disp){
-	display = disp;
-	y0 = display->height()/2;
-}
-
-
-void GuiHandler::welcomeScreen() {
-	display->setCursor(0, 0);
-	display->setTextColor(WHITE);
-	display->setTextSize(1);
-	println((char*) "Wello Horld!");
-	display->setCursor(0, display->getCursorY() + 8);
-	display->setTextColor(YELLOW);
-	display->setTextSize(1);
-	println((char*) "Modularity");
-	display->setCursor(0, display->getCursorY() + 9);
-	display->setTextColor(YELLOW);
-	display->setTextSize(1);
-	println((char*) "in the palm of your hand");
-	display->setCursor(0, display->getCursorY() + 10);
-	display->setTextColor(YELLOW);
-	display->setTextSize(1);
-	println((char*) "anywhere !");
-	display->setCursor(0, display->getCursorY() + 11);
-	display->setTextColor(RED);
-	display->setTextSize(1);
-	println((char*) "ESP_I0");
-	display->setCursor(0, display->getCursorY() + 13);
-	display->setTextSize(1);
-	display->setTextColor(BLUE);
-	println((char*) "In FULL COLOR!");
-	println((char*) "");	
-}
-
 static const uint8_t angular[]  = {
 	// 'violet, 96x64px
 	0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 
@@ -107,11 +63,66 @@ static const uint8_t angular[]  = {
 	0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xc0, 0x03, 0xff, 0xff, 0xff, 0xff, 0xff, 
 	0xff, 0xff, 0xff, 0xff, 0xff, 0xf0, 0x0f, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 
 	0xff, 0xf8, 0x3f, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xfe, 0x7f, 0xff, 
-	0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff};
+	0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff
+};
 
+GuiHandler::GuiHandler(DISP_DESC *disp) {
+	display = disp;
+	x0 = 25; //display->width()/2;
+
+	if(disp != NULL){
+		y0 = display->height()/2;
+	}
+}
+
+void GuiHandler::setDisplay(DISP_DESC *disp){
+	display = disp;
+	y0 = display->height()/2;
+}
+/*
+void GuiHandler::Menu() {
+	display->setCursor(0, 0);
+	display->setTextColor(WHITE);
+	display->setTextSize(2);
+	println((char *) "Select a Mode to boot in :");
+	display->setCursor(8, 0)
+	display->setTextSize(1);
+	println((char *) "...");
+}
+*/
 void GuiHandler::Logo() {
 	display->drawBitmap(1, 1, angular, 96, 64, WHITE);
 }
+
+void GuiHandler::welcomeScreen() {
+	display->setCursor(0, 0);
+	display->setTextColor(WHITE);
+	display->setTextSize(1);
+	println((char*) "Wello Horld!");
+	display->setCursor(0, display->getCursorY() + 8);
+	display->setTextColor(YELLOW);
+	display->setTextSize(1);
+	println((char*) "Modularity");
+	display->setCursor(0, display->getCursorY() + 9);
+	display->setTextColor(YELLOW);
+	display->setTextSize(1);
+	println((char*) "in the palm of your hand");
+	display->setCursor(0, display->getCursorY() + 10);
+	display->setTextColor(YELLOW);
+	display->setTextSize(1);
+	println((char*) "anywhere !");
+	display->setCursor(0, display->getCursorY() + 11);
+	display->setTextColor(RED);
+	display->setTextSize(1);
+	println((char*) "ESP_I0");
+	display->setCursor(0, display->getCursorY() + 13);
+	display->setTextSize(1);
+	display->setTextColor(BLUE);
+	println((char*) "In FULL COLOR!");
+	println((char*) "");	
+}
+
+
 
 GuiHandler *GuiHandler::setTitle(string _title) {
 	this->title = new string(_title);

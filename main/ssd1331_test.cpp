@@ -26,7 +26,7 @@ void ssd1331_test(void *ignore) {
 	disp.begin();
 	disp.clearScreen();
 	disp.setTextWrap(0);
-	disp.setRotation(0);
+	disp.setRotation(2);
 
 	gui.setDisplay(&disp);
 	gui.Logo();

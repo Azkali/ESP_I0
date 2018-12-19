@@ -42,9 +42,9 @@
 #include "esp_event_loop.h"
 #include "esp_avrc_api.h"
 
+#include "a2dp_source_start.h"
+
 extern "C"{
-void app_main();
-}
 
 /* event handler for OLED screen */
 esp_err_t event_handler(void *ctx, system_event_t *event)
@@ -59,18 +59,18 @@ enum {
     BT_APP_EVT_STACK_UP = 0,
 };
 
+BT_MODE = SINK;
+
 /* handler for bluetooth stack enabled events */
 static void bt_av_hdl_stack_evt(uint16_t event, void *p_param);
-
-void app_main()
-{
+void a2dp_sink_startup() {
     /* Initialize NVS — it is used to store PHY calibration data */
-    esp_err_t ret = nvs_flash_init();
-    if (ret == ESP_ERR_NVS_NO_FREE_PAGES) {
+    esp_err_t err = nvs_flash_init();
+    if (err == ESP_ERR_NVS_NO_FREE_PAGES || err == ESP_ERR_NVS_NEW_VERSION_FOUND) {
         ESP_ERROR_CHECK(nvs_flash_erase());
-        ret = nvs_flash_init();
+        err = nvs_flash_init();
     }
-    ESP_ERROR_CHECK( ret );
+	ESP_ERROR_CHECK(err);
 
     i2s_config_t i2s_config = {
 #ifdef CONFIG_A2DP_SINK_OUTPUT_INTERNAL_DAC
@@ -92,6 +92,7 @@ void app_main()
 
     i2s_driver_install((i2s_port_t)0, &i2s_config, 0, NULL);
 #ifdef CONFIG_A2DP_SINK_OUTPUT_INTERNAL_DAC
+	i2s_set_dac_mode(I2S_DAC_CHANNEL_BOTH_EN);
     i2s_set_pin(0, NULL);
 #else
     i2s_pin_config_t pin_config = {
@@ -104,35 +105,104 @@ void app_main()
     i2s_set_pin((i2s_port_t)0, &pin_config);
 #endif
 
-
     ESP_ERROR_CHECK(esp_bt_controller_mem_release(ESP_BT_MODE_BLE));
 
     esp_bt_controller_config_t bt_cfg = BT_CONTROLLER_INIT_CONFIG_DEFAULT();
-    if (esp_bt_controller_init(&bt_cfg) != ESP_OK) {
-        ESP_LOGE(BT_AV_TAG, "%s initialize controller failed\n", __func__);
+    if ((err = esp_bt_controller_init(&bt_cfg)) != ESP_OK) {
+        ESP_LOGE(BT_AV_TAG, "%s initialize controller failed: %s\n", __func__, esp_err_to_name(err));
         return;
     }
 
-    if (esp_bt_controller_enable(ESP_BT_MODE_CLASSIC_BT) != ESP_OK) {
-        ESP_LOGE(BT_AV_TAG, "%s enable controller failed\n", __func__);
+    if ((err = esp_bt_controller_enable(ESP_BT_MODE_CLASSIC_BT)) != ESP_OK) {
+        ESP_LOGE(BT_AV_TAG, "%s enable controller failed: %s\n", __func__, esp_err_to_name(err));
         return;
     }
 
-    if (esp_bluedroid_init() != ESP_OK) {
-        ESP_LOGE(BT_AV_TAG, "%s initialize bluedroid failed\n", __func__);
+    if ((err = esp_bluedroid_init()) != ESP_OK) {
+        ESP_LOGE(BT_AV_TAG, "%s initialize bluedroid failed: %s\n", __func__, esp_err_to_name(err));
         return;
     }
 
-    if (esp_bluedroid_enable() != ESP_OK) {
-        ESP_LOGE(BT_AV_TAG, "%s enable bluedroid failed\n", __func__);
+    if ((err = esp_bluedroid_enable()) != ESP_OK) {
+        ESP_LOGE(BT_AV_TAG, "%s enable bluedroid failed: %s\n", __func__, esp_err_to_name(err));
         return;
-    }
+}
 
     /* create application task */
     bt_app_task_start_up();
 
     /* Bluetooth device name, connection mode and profile set up */
     bt_app_work_dispatch(bt_av_hdl_stack_evt, BT_APP_EVT_STACK_UP, NULL, 0, NULL);
+
+
+    /* Set default parameters for Secure Simple Pairing */
+    esp_bt_sp_param_t param_type = ESP_BT_SP_IOCAP_MODE;
+    esp_bt_io_cap_t iocap = ESP_BT_IO_CAP_IO;
+    esp_bt_gap_set_security_param(param_type, &iocap, sizeof(uint8_t));
+
+    /*
+     * Set default parameters for Legacy Pairing
+     * Use fixed pin code
+     */
+    esp_bt_pin_type_t pin_type = ESP_BT_PIN_TYPE_FIXED;
+    esp_bt_pin_code_t pin_code;
+    pin_code[0] = '1';
+    pin_code[1] = '2';
+    pin_code[2] = '3';
+    pin_code[3] = '4';
+	esp_bt_gap_set_pin(pin_type, 4, pin_code);
+}
+
+void bt_mode() {
+	if ((err = esp_bt_controller_enable()) == ESP_OK ){
+		if (BT_MODE == SINK){
+			return SINK;
+		}
+		else if (BT_MODE == SRC) {
+			return SRC;
+		}
+		else {
+			ESP_LOGE("BT_MODE: Value {SRC or SINK} is not set please choose one");
+			return;
+		}
+	}
+
+	else {
+		ESP_LOGE(BT_AV_TAG, "%s enable bluedroid failed: %s\n", __func__, esp_err_to_name(err));
+        return;
+	}
+}
+
+void ap_mode_start(){
+	/* Wifi-Ap */
+	ESP_ERROR_CHECK( esp_event_loop_init(event_handler, NULL) );
+	if ((err = esp_bt_controller_enable()) != ESP_OK ) {
+		wifi_event_group = xEventGroupCreate();
+		start_dhcp_server();
+		initialise_wifi_in_ap();
+		xTaskCreate(&print_sta_info,"print_sta_info",4096,NULL,5,NULL)
+	}
+	else {
+		ESP_LOGE("AP_MODE: Couldn't start Wifi AP Mode because Bluetooth is select.\nIf you want to use AP MOode Please diasble BT before.\n");
+		return;
+	}
+}
+
+void app_main()
+{
+
+	if((err = esp_bt_controller_enable()) == ESP_OK) {
+		if(bt_mode() == SINK) {
+
+			a2dp_sink_startup();
+		}
+		else if(bt_mode() == SRC) {
+			a2dp_source_start();
+		}
+	}
+	else {
+		ap_mode_start();
+	}
 
     /* Deep-sleep Function */
     //ds_gpio_config(PULSE_CNT_GPIO_NUM_33);
@@ -144,8 +214,6 @@ void app_main()
     ESP_LOGI("tag", ">> app_main");
     xTaskCreatePinnedToCore(&ssd1331_test, "ssd1331_final", 8048, NULL, 5, NULL, 0);
     ESP_LOGI("tag", ">> app_main");
-
-
 }
 
 
