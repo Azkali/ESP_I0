@@ -1,7 +1,7 @@
+/*
 #include <esp_log.h>
 #include <freertos/FreeRTOS.h>
 #include <freertos/task.h>
-
 #include "gui_handler.h"
 
 #include "sdkconfig.h"
@@ -42,6 +42,4 @@ void ssd1331_test(void *ignore) {
 	
 	ESP_LOGD(tag, "<< exit point ssd1331_final");
 	vTaskDelete(NULL);
-}
-
- 
+}*/

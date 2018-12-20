@@ -40,9 +40,9 @@ static void bt_av_hdl_a2d_evt(uint16_t event, void *p_param);
 /* avrc event handler */
 static void bt_av_hdl_avrc_evt(uint16_t event, void *p_param);
 
-static uint32_t m_pkt_cnt = 0;
-static esp_a2d_audio_state_t m_audio_state = ESP_A2D_AUDIO_STATE_STOPPED;
-static const char *m_a2d_conn_state_str[] = {"Disconnected", "Connecting", "Connected", "Disconnecting"};
+static uint32_t s_pkt_cnt = 0;
+static esp_a2d_audio_state_t s_audio_state = ESP_A2D_AUDIO_STATE_STOPPED;
+static const char *s_a2d_conn_state_str[] = {"Disconnected", "Connecting", "Connected", "Disconnecting"};
 static const char *m_a2d_audio_state_str[] = {"Suspended", "Stopped", "Started"};
 
 /* callback for A2DP sink */
@@ -64,7 +64,7 @@ void bt_app_a2d_cb(esp_a2d_cb_event_t event, esp_a2d_cb_param_t *param)
 void bt_app_a2d_data_cb(const uint8_t *data, uint32_t len)
 {
     size_t bytes_written;
-    i2s_write(0, data, len, &bytes_written, portMAX_DELAY);
+    i2s_write((i2s_port_t)0, data, len, &bytes_written, portMAX_DELAY);
     if (++s_pkt_cnt % 100 == 0) {
         ESP_LOGI(BT_AV_TAG, "Audio packet count %u", s_pkt_cnt);
 }
