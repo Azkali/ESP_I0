@@ -39,5 +39,11 @@ config I2S_DATA_PIN
     help
         GPIO number to use for I2S Data Driver.
 
+config BT_REMOTE_NAME
+    string "BT remote device name"
+	default "ESP-ADF-SPEAKER"
+	help
+		BT_REMOTE_NAME (Bluetooth device name) for the example to connect to.
+
 
 endmenu

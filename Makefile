@@ -4,8 +4,8 @@
 #
 
 PROJECT_NAME := ESP_I0
-EXTRA_COMPONENT_DIRS := example
+#EXTRA_COMPONENT_DIRS := example
 
-COMPONENT_ADD_INCLUDEDIRS := components/include
+#COMPONENT_ADD_INCLUDEDIRS := components/include
 
-include $(IDF_PATH)/make/project.mk
+include $(ADF_PATH)/project.mk
