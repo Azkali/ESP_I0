@@ -102,3 +102,6 @@ The library was intended to support only TFT displays but using a Sprite as a 1 
 
 ![Example](https://i.imgur.com/L2tV129.jpg?1)
 
+# Source
+
+[Bodmer/TFT_eSPI](https://github.com/Bodmer/TFT_eSPI)
