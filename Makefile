@@ -6,6 +6,6 @@
 PROJECT_NAME := ESP_I0
 #EXTRA_COMPONENT_DIRS := example
 
-#COMPONENT_ADD_INCLUDEDIRS := components/include
+COMPONENT_ADD_INCLUDEDIRS := components/include
 
 include $(ADF_PATH)/project.mk
