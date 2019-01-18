@@ -29,7 +29,7 @@ static const char *TAG = "BLUETOOTH_EXAMPLE";
 #define LYRAT_TOUCH_VOLUP   -1//TOUCH_PAD_NUM7
 #define LYRAT_TOUCH_VOLDWN  -1//TOUCH_PAD_NUM4
 
-void bt_sink(void)
+void bt_sink(void *arg)
 {
     audio_pipeline_handle_t pipeline;
     audio_element_handle_t bt_stream_reader, i2s_stream_writer;
@@ -193,4 +193,5 @@ void bt_sink(void)
     audio_element_deinit(i2s_stream_writer);
     esp_periph_destroy();
     bluetooth_service_destroy();
+	vTaskDelete(NULL);
 }

@@ -61,10 +61,10 @@ esp_err_t sdcard_mount(const char* base_path)
 // Pin mapping when using SPI mode.
 // With this mapping, SD card can be used both in SPI and 1-line SD mode.
 // Note that a pull-up on CS line is required in SD mode.
-#define PIN_NUM_MISO 19
-#define PIN_NUM_MOSI 5
-#define PIN_NUM_CLK  18
-#define PIN_NUM_CS   23
+#define PIN_NUM_MISO 2
+#define PIN_NUM_MOSI 15
+#define PIN_NUM_CLK  14
+#define PIN_NUM_CS   13
 #endif //USE_SPI_MODE
 
     ESP_LOGI(TAG, "Initializing SD card");

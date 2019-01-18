@@ -58,7 +58,7 @@ typedef struct {
 
 #define PCM_SCLK                    26
 #define PCM_LCLK                    25
-#define PCM_DSIN                    22
+#define PCM_DSIN                    19
 #define PCM_DOUT 					-1
 
 #define I2S_STREAM_CFG_DEFAULT() {                                              \

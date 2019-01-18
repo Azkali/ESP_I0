@@ -120,7 +120,7 @@ void print_sta_info(void *pvParam){
 	}
 }
 
-void ap_mode_start(){
+void ap_mode_start(void *arg){
 	/* Wifi-Ap */
 	ESP_ERROR_CHECK( esp_event_loop_init(event_handler, NULL) );
 	//if ((err = esp_bt_controller_enable()) != ESP_OK ) {
@@ -128,6 +128,7 @@ void ap_mode_start(){
 		start_dhcp_server();
 		initialise_wifi_in_ap();
 		xTaskCreate(&print_sta_info,"print_sta_info",4096,NULL,5,NULL);
+		vTaskDelete(NULL);
 	//}
 	//else {
 		//printf("AP_MODE: Couldn't start Wifi AP Mode because Bluetooth is select.\nIf you want to use AP MOode Please diasble BT before.\n");
