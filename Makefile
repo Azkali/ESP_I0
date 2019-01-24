@@ -5,7 +5,8 @@
 
 PROJECT_NAME := ESP_I0
 #EXTRA_COMPONENT_DIRS := example
+#EXTRA_COMPONENT_DIRS += ./components/oLib ./components/audio
 
-COMPONENT_ADD_INCLUDEDIRS := components/include
+#COMPONENT_ADD_INCLUDEDIRS := ./components/include ./components/oLib/include ./components/audio/include
 
 include $(ADF_PATH)/project.mk

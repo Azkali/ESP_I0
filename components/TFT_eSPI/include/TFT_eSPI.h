@@ -15,7 +15,7 @@
 #ifndef _TFT_eSPIH_
 #define _TFT_eSPIH_
 
-#define ESP32 //Just used to test ESP32 options
+//#define ESP32 //Just used to test ESP32 options
 
 // Include header file that defines the fonts loaded, the TFT drivers
 // available and the pins to be used

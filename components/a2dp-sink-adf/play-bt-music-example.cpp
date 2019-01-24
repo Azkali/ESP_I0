@@ -6,6 +6,7 @@
    software is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
    CONDITIONS OF ANY KIND, either express or implied.
 */
+
 #include <string.h>
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
@@ -18,16 +19,17 @@
 #include "i2s_stream.h"
 #include "esp_peripherals.h"
 #include "periph_touch.h"
+#include "periph_button.h"
 //#include "audio_hal.h"
 //#include "board.h"
 #include "bluetooth_service.h"
 
-static const char *TAG = "BLUETOOTH_EXAMPLE";
-
-#define LYRAT_TOUCH_SET     -1//TOUCH_PAD_NUM9
+#define LYRAT_TOUCH_SET     GPIO_NUM_37//TOUCH_PAD_NUM9
 #define LYRAT_TOUCH_PLAY    -1//TOUCH_PAD_NUM8
-#define LYRAT_TOUCH_VOLUP   -1//TOUCH_PAD_NUM7
-#define LYRAT_TOUCH_VOLDWN  -1//TOUCH_PAD_NUM4
+#define LYRAT_TOUCH_VOLUP   GPIO_NUM_38//TOUCH_PAD_NUM7
+#define LYRAT_TOUCH_VOLDWN  GPIO_NUM_39//TOUCH_PAD_NUM4
+
+static const char *TAG = "BLUETOOTH_EXAMPLE";
 
 void bt_sink(void *arg)
 {
@@ -83,17 +85,18 @@ void bt_sink(void *arg)
     esp_periph_init(&periph_cfg);
 
     ESP_LOGI(TAG, "[4.1] Initialize Touch peripheral");
-    periph_touch_cfg_t touch_cfg = {
-        .touch_mask = TOUCH_SEL_SET | TOUCH_SEL_PLAY | TOUCH_SEL_VOLUP | TOUCH_SEL_VOLDWN,
-        .tap_threshold_percent = 70,
-    };
-    esp_periph_handle_t touch_periph = periph_touch_init(&touch_cfg);
-
+	// Setup BUTTON peripheral
+	periph_button_cfg_t btn_cfg = {
+		.gpio_mask = GPIO_SEL_37 | GPIO_SEL_38 | GPIO_SEL_39
+	};
+	esp_periph_handle_t button_handle = periph_button_init(&btn_cfg);
+    
     ESP_LOGI(TAG, "[4.2] Create Bluetooth peripheral");
     esp_periph_handle_t bt_periph = bluetooth_service_create_periph();
 
     ESP_LOGI(TAG, "[4.2] Start all peripherals");
-    esp_periph_start(touch_periph);
+    /*esp_periph_start(touch_periph);*/
+	esp_periph_start(button_handle);
     esp_periph_start(bt_periph);
 
     ESP_LOGI(TAG, "[ 5 ] Setup event listener");
@@ -136,24 +139,36 @@ void bt_sink(void *arg)
             continue;
         }
 
-        if (msg.source_type == PERIPH_ID_TOUCH
-            && msg.cmd == PERIPH_TOUCH_TAP
-            && msg.source == (void *)touch_periph) {
+    	if (msg.source_type == PERIPH_ID_BUTTON
+            && msg.cmd == PERIPH_BUTTON_PRESSED
+            && msg.source == (void *)button_handle) {
 
-            if ((int) msg.data == TOUCH_PLAY) {
-                ESP_LOGI(TAG, "[ * ] [Play] touch tap event");
-                periph_bluetooth_play(bt_periph);
-            } else if ((int) msg.data == TOUCH_SET) {
-                ESP_LOGI(TAG, "[ * ] [Set] touch tap event");
-                periph_bluetooth_pause(bt_periph);
-            } else if ((int) msg.data == TOUCH_VOLUP) {
-                ESP_LOGI(TAG, "[ * ] [Vol+] touch tap event");
-                periph_bluetooth_next(bt_periph);
-            } else if ((int) msg.data == TOUCH_VOLDWN) {
-                ESP_LOGI(TAG, "[ * ] [Vol-] touch tap event");
-                periph_bluetooth_prev(bt_periph);
-            }
-        }
+			if ((int) msg.data == GPIO_NUM_37) {
+				ESP_LOGI(TAG, "[ * ] [Set] touch tap event %d",(int) msg.cmd);
+				periph_bluetooth_pause(bt_periph);
+			} else if ((int) msg.data == GPIO_NUM_38) {
+				ESP_LOGI(TAG, "[ * ] [Vol+] touch tap event");
+				periph_bluetooth_next(bt_periph);
+			} else if ((int) msg.data == GPIO_NUM_39) {
+				ESP_LOGI(TAG, "[ * ] [Vol-] touch tap event");
+				periph_bluetooth_prev(bt_periph);
+			}
+		}
+		else if (msg.source_type == PERIPH_ID_BUTTON
+            && msg.cmd == PERIPH_BUTTON_LONG_PRESSED
+            && msg.source == (void *)button_handle) {
+			
+			if ((int) msg.data == GPIO_NUM_37) {
+				ESP_LOGI(TAG, "[ * ] [Set] touch tap event %d",(int) msg.cmd);
+				periph_bluetooth_play(bt_periph);
+			} else if ((int) msg.data == GPIO_NUM_38) {
+				ESP_LOGI(TAG, "[ * ] [Vol+] touch tap event");
+				periph_bluetooth_next(bt_periph);
+			} else if ((int) msg.data == GPIO_NUM_39) {
+				ESP_LOGI(TAG, "[ * ] [Vol-] touch tap event");
+				periph_bluetooth_prev(bt_periph);
+			}
+		}
 
         /* Stop when the Bluetooth is disconnected or suspended */
         if (msg.source_type == PERIPH_ID_BLUETOOTH
