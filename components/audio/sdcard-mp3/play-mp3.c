@@ -74,7 +74,9 @@ void app_main(void)
 
     ESP_LOGI(TAG, "[3.4] Register all elements to audio pipeline");
     audio_pipeline_register(pipeline, fatfs_stream_reader, "file");
+    // Switch with appropriate variation depending on format
     audio_pipeline_register(pipeline, mp3_decoder, "mp3");
+    // Flac, WAV, etc
     audio_pipeline_register(pipeline, i2s_stream_writer, "i2s");
 
     ESP_LOGI(TAG, "[3.5] Link it together [sdcard]-->fatfs_stream-->mp3_decoder-->i2s_stream-->[codec_chip]");

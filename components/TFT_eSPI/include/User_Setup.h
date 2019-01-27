@@ -16,7 +16,7 @@
 // ##################################################################################
 
 // Only define one driver, the other ones must be commented out
-#define ILI9341_DRIVER
+//#define ILI9341_DRIVER
 //#define ST7735_DRIVER      // Define additional parameters below for this display
 //#define ILI9163_DRIVER     // Define additional parameters below for this display
 //#define S6D02A1_DRIVER
@@ -25,20 +25,20 @@
 //#define ILI9481_DRIVER
 //#define ILI9486_DRIVER
 //#define ILI9488_DRIVER     // WARNING: Do not connect ILI9488 display SDO to MISO if other devices share the SPI bus (TFT SDO does NOT tristate when CS is high)
-//#define ST7789_DRIVER      // Define additional parameters below for this display
+#define ST7789_DRIVER      // Define additional parameters below for this display
 //#define R61581_DRIVER
 
 // Some displays support SPI reads via the MISO pin, other displays have a single
 // bi-directional SDA pin and the library will try to read this via the MOSI line.
 // To use the SDA line for reading data from the TFT uncomment the following line:
 
-// #define TFT_SDA_READ      // This option if for ESP32 ONLY, tested with ST7789 display only
+#define TFT_SDA_READ      // This option if for ESP32 ONLY, tested with ST7789 display only
 
 // For ST7789 ONLY, define the colour order IF the blue and red are swapped on your display
 // Try ONE option at a time to find the correct colour order for your display
 
 //  #define TFT_RGB_ORDER TFT_RGB  // Colour order Red-Green-Blue
-//  #define TFT_RGB_ORDER TFT_BGR  // Colour order Blue-Green-Red
+#define TFT_RGB_ORDER TFT_BGR  // Colour order Blue-Green-Red
 
 // For M5Stack ESP32 module with integrated ILI9341 display ONLY, remove // in line below
 
@@ -157,10 +157,10 @@
 // For ESP32 Dev board (only tested with ILI9341 display)
 // The hardware SPI can be mapped to any pins
 
-#define TFT_MISO 0
+#define TFT_MISO 19
 #define TFT_MOSI 23
 #define TFT_SCLK 18
-#define TFT_CS    5  // Chip select control pin
+#define TFT_CS   05  // Chip select control pin
 #define TFT_DC   16  // Data Command control pin
 #define TFT_RST   17  // Reset pin (could connect to RST pin)
 //#define TFT_RST  -1  // Set TFT_RST to -1 if display RESET is connected to ESP32 board RST
@@ -257,7 +257,7 @@
 // #define SPI_FREQUENCY  80000000
 
 // Optional reduced SPI frequency for reading TFT
-#define SPI_READ_FREQUENCY  20000000
+#define SPI_READ_FREQUENCY  6000000
 
 // The XPT2046 requires a lower SPI clock rate of 2.5MHz so we define that here:
 #define SPI_TOUCH_FREQUENCY  2500000

@@ -14,6 +14,7 @@
 
 #include "Arduino.h"
 
+#include <string>
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -52,7 +53,7 @@
 #define TFT_GREY 0x5AEB // New colour
 
 //ui-GUI
-#include "gui_handler.h"
+/*#include "gui_handler.h"
 
 #include "sdkconfig.h"
 
@@ -68,12 +69,11 @@ static char tag[] = "SSD1331_test";
 	DISP_DESC disp = DISP_DESC(PIN_NUM_CS, PIN_NUM_DC, PIN_NUM_MOSI, PIN_NUM_CLK, PIN_NUM_RST);
 #else
 	TFT_eSPI disp = TFT_eSPI();
-#endif
+#endif*/
 
 //TFT_eSPI
-//TFT_eSPI tft = TFT_eSPI();  // Invoke library
+TFT_eSPI tft = TFT_eSPI();  // Invoke library
 
-/*
 void launch_ui(void *arg) {
 	tft.init();
 	tft.setRotation(0);
@@ -89,9 +89,9 @@ void launch_ui(void *arg) {
 	tft.println("Hey");
 
 	vTaskDelete(NULL);
-}*/
+}
 
-void ssd1331_test(void *ignore) {
+/*void ssd1331_test(void *ignore) {
 	ESP_LOGD(tag, ">> entry point ssd1331_final");
 	// Initialize display
 	disp.begin();
@@ -114,7 +114,7 @@ void ssd1331_test(void *ignore) {
 
 	ESP_LOGD(tag, "<< exit point ssd1331_final");
 	vTaskDelete(NULL);
-}
+}*/
 
 extern "C"{
 
@@ -129,13 +129,13 @@ extern "C"{
 	}
 
 	void app_main(/*void* arg*/) {
-
 		xTaskCreatePinnedToCore(&bt_sink, "bt-sink", 8192, NULL, 3, NULL, 0); 
 
 		/* OLED Launch*/
 		ESP_LOGI("tag", ">> app_main");
 		xTaskCreatePinnedToCore(&launch_ui, "ssd1331_final", 8192, NULL, 3, NULL, 1);
 		ESP_LOGI("tag", ">> app_main");
+		initArduino();
 		
 		//xTaskCreatePinnedToCore(&ap_mode_start, "ap-mode", 8192, NULL, 4, NULL, 0);
 

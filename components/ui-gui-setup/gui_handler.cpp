@@ -87,33 +87,33 @@ void GuiHandler::Menu() {
 }
 */
 void GuiHandler::Logo() {
-	display->drawBitmap(1, 1, angular, 96, 64, WHITE);
+	display->drawBitmap(1, 1, angular, 96, 64, TFT_WHITE);
 }
 
 void GuiHandler::welcomeScreen() {
 	display->setCursor(0, 0);
-	display->setTextColor(WHITE);
+	display->setTextColor(TFT_WHITE);
 	display->setTextSize(1);
 	println((char*) "Wello Horld!");
 	display->setCursor(0, display->getCursorY() + 8);
-	display->setTextColor(YELLOW);
+	display->setTextColor(TFT_YELLOW);
 	display->setTextSize(1);
 	println((char*) "Modularity");
 	display->setCursor(0, display->getCursorY() + 9);
-	display->setTextColor(YELLOW);
+	display->setTextColor(TFT_YELLOW);
 	display->setTextSize(1);
 	println((char*) "in the palm of your hand");
 	display->setCursor(0, display->getCursorY() + 10);
-	display->setTextColor(YELLOW);
+	display->setTextColor(TFT_YELLOW);
 	display->setTextSize(1);
 	println((char*) "anywhere !");
 	display->setCursor(0, display->getCursorY() + 11);
-	display->setTextColor(RED);
+	display->setTextColor(TFT_RED);
 	display->setTextSize(1);
 	println((char*) "ESP_I0");
 	display->setCursor(0, display->getCursorY() + 13);
 	display->setTextSize(1);
-	display->setTextColor(BLUE);
+	display->setTextColor(TFT_BLUE);
 	println((char*) "In FULL COLOR!");
 	println((char*) "");	
 }
@@ -134,26 +134,26 @@ GuiHandler *GuiHandler::setAlbum(String _album) {
 }
 
 GuiHandler *GuiHandler::refreshTitle(){
-	this->refreshRow(POS_TITLE, title, RED);
+	this->refreshRow(POS_TITLE, title, TFT_RED);
 	return this;
 }
 
 GuiHandler *GuiHandler::refreshArtist(){
-	this->refreshRow(POS_ARTIST, artist, YELLOW);	
+	this->refreshRow(POS_ARTIST, artist, TFT_YELLOW);	
 	return this;
 }
 
 GuiHandler *GuiHandler::refreshAlbum(){
-	this->refreshRow(POS_ALBUM, album, CYAN);
+	this->refreshRow(POS_ALBUM, album, TFT_CYAN);
 	return this;
 }
 
 
-GuiHandler *GuiHandler::scrollLine(String *line) {
+/*GuiHandler *GuiHandler::scrollLine(String *line) {
 	display->ScrollSet(12,0,display->TFTHEIGHT,0,10);
-	display->scroll(line);
+	display->scroll();
 	return this;
-}	
+}*/
 
 GuiHandler *GuiHandler::refreshScreen(){
 	refreshTitle();
@@ -163,7 +163,8 @@ GuiHandler *GuiHandler::refreshScreen(){
 }
 
 void GuiHandler::refreshRow(int16_t posx, String *datdata, color_t color){
-	display->clearWindow(0, posx, display->width(), posx + INTERLINE);
+	//display->clearWindow(0, posx, display->width(), posx + INTERLINE);
+	display->fillScreen(TFT_BLACK);
 	display->setCursor(0, posx + 2);
 	display->setTextColor(color);
 	display->setTextSize(1);
