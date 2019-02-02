@@ -10,29 +10,31 @@ The goal is to use the most of the ESP-ADF library to turn any ESP32 into a Musi
 ESP_I/0 Functions and Buttons
 =============================
 
-|Functions    | State |
-| :--------   | :---- |
-| AccessPoint |   Ok  |
-| AD2P-SINK   |   Ok  |
-| AD2P-SRC    |   -   |
-| APPFS       |   -   |
-| AudioDecod. |   -   |
-| AudioMeta   |   -   |
-| FreeRTOS    |   ?   |
-| HFP         |   Ok  |
-| HTTP OTA    |   -   |
-| HTTP Serv.  |   -   |
-| UI Drivers  |   Ok  |
-| SD Card     |   -   |
-| SPIFFS      |   -   |
+|Functions            | State |
+| :--------           | :---- |
+| AccessPoint         |   -   |
+| AD2P-SINK           |   Ok  |
+| AD2P-SRC            |   -   |
+| APPFS               |   -   |
+| GenericAudioHandler |   X   |
+| GUIHandler          |   X   |
+| AudioMeta           |   X   |
+| FreeRTOS            |   ?   |
+| HFP                 |   Ok  |
+| HTTP OTA            |   -   |
+| HTTP Serv.          |   -   |
+| UI Drivers          |   Ok  |
+| SD Card             |   -   |
+| SPIFFS              |   -   |
 
 ```
 - "-": Undefined state {Not tested/Not implemented/Needs Rework}
 - "Ok": Functionnality has been tested and seems to work !
 - "?": Unknownstate {Missing infos}
+- "X": Does Not Compile
 ```
 
-## Current I2S configuration
+### Current I2S configuration
 
 
 | ESP GPIO_NUM  | I2S signal   |
@@ -41,7 +43,7 @@ ESP_I/0 Functions and Buttons
 | GPIO_NUM_22   | DATA         |
 | GPIO_NUM_26   | BCK          |
 
-## Buttons Configuration
+### Buttons Configuration
 
 | ESP GPIO_NUM  | SHORT PRESS    | LONG_PRESS |
 | :------------ | :------------- | :--------- |
@@ -67,3 +69,11 @@ or :
 | GPIO_NUM_37   | PAUSE TRACK/PLAY TRACK |       -        |
 | GPIO_NUM_38   | VOL+                   | NEXT TRACK     |
 | GPIO_NUM_39   | VOL-                   | PREVIOUS TRACK |
+
+## Sources
+
+[ESP-ADF](https://github.com/espressif/esp-adf)
+[ESP-IDF](https://github.com/espressif/esp-idf)
+[TFT_eSPI](https://github.com/Bodmer/TFT_eSPI)
+[ARDUINO-ESP32](https://github.com/espressif/arduino-esp32)
+[ADAFRUIT-GFX](https://github.com/adafruit/Adafruit-GFX-Library)
