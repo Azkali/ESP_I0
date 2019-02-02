@@ -2,7 +2,7 @@ ESPIO
 ======================
 # What is ESPIO ?
 
-ESPIO is, an OpenSource Wireless MusicPlayer, based on ESP32, using ESP-ADF library.
+ESPIO is, an OpenSource Wireless MusicPlayer, based on ESP32 (currently TTGO TM), using ESP-ADF library.
 
 The goal is to use the most of the ESP-ADF library to turn any ESP32 into a MusicPlayer ( including several screen drivers thanks to [Bodmer TFT_eSPI](https://github.com/Bodmer/TFT_eSPI)'s library).
 
