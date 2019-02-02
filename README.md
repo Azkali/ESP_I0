@@ -23,7 +23,7 @@ ESP_I0 Functions and Buttons
 | HFP                 |   Ok  |
 | HTTP OTA            |   -   |
 | HTTP Serv.          |   -   |
-| UI Drivers          |   Ok  |
+| TFT Drivers         |   Ok  |
 | SD Card             |   -   |
 | SPIFFS              |   -   |
 
