@@ -45,11 +45,15 @@ ESP_I/0 Functions and Buttons
 
 ### Buttons Configuration
 
+#### Current Config.
+
 | ESP GPIO_NUM  | SHORT PRESS    | LONG_PRESS |
 | :------------ | :------------- | :--------- |
 | GPIO_NUM_37   | PAUSE TRACK    | PLAY TRACK |
 | GPIO_NUM_38   | NEXT TRACK     | NEXT TRACK |
 | GPIO_NUM_39   | PREVIOUS TRACK | NEXT TRACK |
+
+#### Next Config.
 
 ```
 Planning to change to either :
