@@ -72,8 +72,8 @@ or :
 
 ## Sources
 
-[ESP-ADF](https://github.com/espressif/esp-adf)
-[ESP-IDF](https://github.com/espressif/esp-idf)
-[TFT_eSPI](https://github.com/Bodmer/TFT_eSPI)
-[ARDUINO-ESP32](https://github.com/espressif/arduino-esp32)
-[ADAFRUIT-GFX](https://github.com/adafruit/Adafruit-GFX-Library)
+- [ESP-ADF](https://github.com/espressif/esp-adf)
+- [ESP-IDF](https://github.com/espressif/esp-idf)
+- [TFT_eSPI](https://github.com/Bodmer/TFT_eSPI)
+- [ARDUINO-ESP32](https://github.com/espressif/arduino-esp32)
+- [ADAFRUIT-GFX](https://github.com/adafruit/Adafruit-GFX-Library)
