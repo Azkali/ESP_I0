@@ -1,36 +1,69 @@
-ESP-IDF A2DP-SINK demo
+ESPIO
 ======================
+# What is ESPIO ?
 
-Demo of A2DP audio sink role
+ESPIO is, an OpenSource Wireless MusicPlayer, based on ESP32, using ESP-ADF library.
 
-This is the demo of API implementing Advanced Audio Distribution Profile to receive an audio stream.
-
-For the I2S codec, pick whatever chip or board works for you; this code was written using a PCM5102 chip, but other I2S boards and chips will probably work as well. The default I2S connections are shown below, but these can be changed in menuconfig:
-
-| ESP pin   | I2S signal   |
-| :-------- | :----------- |
-| GPIO25    | LRCK         |
-| GPIO22    | DATA         |
-| GPIO26    | BCK          |
-
-If the internal DAC is selected, analog audio will be available on GPIO25 and GPIO26. The output resolution on these pins will always be limited to 8 bit because of the internal structure of the DACs.
-
-
-After the program is started, other bluetooth devices such as smart phones can discover a device named "ESP_I/0". Once a connection is established, audio data can be transmitted. This will be visible in the application log including a count of audio data packets.
+The goal is to use the most of the ESP-ADF library to turn any ESP32 into a MusicPlayer ( including several screen drivers thanks to [Bodmer TFT_eSPI](https://github.com/Bodmer/TFT_eSPI)'s library).
 
 
 ESP_I/0 Functions and Buttons
 =============================
 
-| ESP pin   | Btn-function |
-| :-------- | :----------- |
-| GPIO33    | Deep-sleep   |
-| GPIO12    | Play/Pause   |
+|Functions    | State |
+| :--------   | :---- |
+| AccessPoint |   Ok  |
+| AD2P-SINK   |   Ok  |
+| AD2P-SRC    |   -   |
+| APPFS       |   -   |
+| AudioDecod. |   -   |
+| AudioMeta   |   -   |
+| FreeRTOS    |   ?   |
+| HFP         |   Ok  |
+| HTTP OTA    |   -   |
+| HTTP Serv.  |   -   |
+| UI Drivers  |   Ok  |
+| SD Card     |   -   |
+| SPIFFS      |   -   |
 
-For the Deep-sleep button you have to use a 10kΩ pulldown resistor to the ground.
+```
+- "-": Undefined state {Not tested/Not implemented/Needs Rework}
+- "Ok": Functionnality has been tested and seems to work !
+- "?": Unknownstate {Missing infos}
+```
 
-## TODO: 
+## Current I2S configuration
+
+
+| ESP GPIO_NUM  | I2S signal   |
+| :------------ | :----------- |
+| GPIO_NUM_25   | LRCK         |
+| GPIO_NUM_22   | DATA         |
+| GPIO_NUM_26   | BCK          |
+
+## Buttons Configuration
+
+| ESP GPIO_NUM  | SHORT PRESS    | LONG_PRESS |
+| :------------ | :------------- | :--------- |
+| GPIO_NUM_37   | PAUSE TRACK    | PLAY TRACK |
+| GPIO_NUM_38   | NEXT TRACK     | NEXT TRACK |
+| GPIO_NUM_39   | PREVIOUS TRACK | NEXT TRACK |
+
 ```
-[ ] 001: Add Play/Pause Button
-[ ] 002: Add Forward/Back Buttons & Function
+Planning to change to either :
 ```
+
+| ESP GPIO_NUM  | SHORT PRESS   | LONG_PRESS     |
+| :------------ | :------------ | :---------     |
+| GPIO_NUM_37   | PAUSE TRACK   | PLAY TRACK     |
+| GPIO_NUM_38   | VOL+          | NEXT TRACK     |
+| GPIO_NUM_39   | VOL-          | PREVIOUS TRACK |
+
+```
+or :
+```
+| ESP GPIO_NUM  | SHORT PRESS            | LONG_PRESS     |
+| :------------ | :--------------------- | :------------- |
+| GPIO_NUM_37   | PAUSE TRACK/PLAY TRACK |       -        |
+| GPIO_NUM_38   | VOL+                   | NEXT TRACK     |
+| GPIO_NUM_39   | VOL-                   | PREVIOUS TRACK |
