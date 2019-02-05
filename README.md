@@ -58,9 +58,8 @@ ESP_I0 Functions and Configurations
 
 #### Next Config.
 
-```
 Planning to change to either :
-```
+
 
 | ESP GPIO_NUM  | SHORT PRESS   | LONG_PRESS     |
 | :------------ | :------------ | :---------     |
@@ -68,9 +67,8 @@ Planning to change to either :
 | GPIO_NUM_38   | VOL+          | NEXT TRACK     |
 | GPIO_NUM_39   | VOL-          | PREVIOUS TRACK |
 
-```
 or :
-```
+
 | ESP GPIO_NUM  | SHORT PRESS            | LONG_PRESS     |
 | :------------ | :--------------------- | :------------- |
 | GPIO_NUM_37   | PAUSE TRACK/PLAY TRACK |       -        |
