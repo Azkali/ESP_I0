@@ -1,5 +1,8 @@
 ESP_I0
 ======================
+
+![TTGo-TM](https://github.com/LilyGO/TTGO-TM-ESP32/blob/master/Image/T14%20V1.0.jpg)
+
 # What is ESP_I0 ?
 
 ESP_I0 is, an OpenSource Wireless MusicPlayer, based on ESP32 (currently TTGO TM), using ESP-ADF library.
