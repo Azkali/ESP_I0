@@ -9,6 +9,10 @@ ESP_I0 is, an OpenSource Wireless MusicPlayer, based on ESP32 (currently [TTGO T
 
 The goal is to use the most of the ESP-ADF library to turn any ESP32 into a MusicPlayer ( including several screen drivers thanks to [Bodmer TFT_eSPI](https://github.com/Bodmer/TFT_eSPI)'s library).
 
+>- "-": Undefined state {Not tested/Not implemented/Needs Rework}
+>- "Ok": Functionnality has been tested and seems to work !
+>- "?": Unknownstate {Missing infos}
+>- "X": Does Not Compile
 
 ESP_I0 Functions and Configurations
 =============================
@@ -29,11 +33,6 @@ ESP_I0 Functions and Configurations
 | TFT Drivers         |   Ok  |
 | SD Card             |   -   |
 | SPIFFS              |   -   |
-
->- "-": Undefined state {Not tested/Not implemented/Needs Rework}
->- "Ok": Functionnality has been tested and seems to work !
->- "?": Unknownstate {Missing infos}
->- "X": Does Not Compile
 
 ### Current I2S configuration
 
