@@ -30,12 +30,10 @@ ESP_I0 Functions and Configurations
 | SD Card             |   -   |
 | SPIFFS              |   -   |
 
-```
-- "-": Undefined state {Not tested/Not implemented/Needs Rework}
-- "Ok": Functionnality has been tested and seems to work !
-- "?": Unknownstate {Missing infos}
-- "X": Does Not Compile
-```
+>- "-": Undefined state {Not tested/Not implemented/Needs Rework}
+>- "Ok": Functionnality has been tested and seems to work !
+>- "?": Unknownstate {Missing infos}
+>- "X": Does Not Compile
 
 ### Current I2S configuration
 
