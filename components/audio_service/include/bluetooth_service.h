@@ -29,9 +29,7 @@
 #include "audio_error.h"
 #include "audio_element.h"
 #include "esp_peripherals.h"
-//#include "gui_handler.h"
-
-//extern GuiHandler gui;
+#include "Arduino.h"
 
 #ifdef __cplusplus
 extern "C" {

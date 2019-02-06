@@ -53,7 +53,7 @@
 #define TFT_GREY 0x5AEB // New colour
 
 //ui-GUI
-/*#include "gui_handler.h"
+#include "gui_handler.h"
 
 #include "sdkconfig.h"
 
@@ -69,57 +69,60 @@ static char tag[] = "SSD1331_test";
 	DISP_DESC disp = DISP_DESC(PIN_NUM_CS, PIN_NUM_DC, PIN_NUM_MOSI, PIN_NUM_CLK, PIN_NUM_RST);
 #else
 	TFT_eSPI disp = TFT_eSPI();
-#endif*/
+#endif
 
 //TFT_eSPI
-TFT_eSPI tft = TFT_eSPI();  // Invoke library
+// TFT_eSPI tft = TFT_eSPI();  // Invoke library
 
-void launch_ui(void *arg) {
+/*void launch_ui(void *arg) {
 	tft.init();
-	tft.setRotation(0);
+	tft.setRotation(1);
 	// Fill screen with grey so we can see the effect of printing with and without 
 	// a background colour defined
-	tft.fillScreen(TFT_BLACK);
+	tft.fillScreen(TFT_PINK);
 
 	// Set "cursor" at top left corner of display (0,0) and select font 2
 	// (cursor will move to next line automatically during printing with 'tft.println'
 	//  or stay on the line is there is room for the text with tft.print)
-	tft.setCursor(0, 0, 2);
+	tft.setCursor(TFT_HEIGHT/3, TFT_WIDTH/2, 4);
 
-	tft.println("Hey");
+	tft.setTextColor(TFT_WHITE, TFT_BLACK);
+
+	tft.println("ESPIO");
 
 	vTaskDelete(NULL);
 }
-
-/*void ssd1331_test(void *ignore) {
+*/
+void ssd1331_test(void *ignore) {
 	ESP_LOGD(tag, ">> entry point ssd1331_final");
 	// Initialize display
 	disp.begin();
-	disp.clearScreen();
+	// disp.clearScreen();
 	disp.setTextWrap(0);
 	disp.setRotation(2);
 
-	gui.setDisplay(&disp);
+	// gui.setDisplay(&disp);
 	gui.Logo();
 	vTaskDelay(1000);
-	disp.clearScreen();
-	disp.clearScreen();
+	// disp.clearScreen();
+	// disp.clearScreen();
 	
 	gui.welcomeScreen();
 	vTaskDelay(1000);
-	disp.clearScreen();
-	disp.clearScreen();
+	// disp.clearScreen();
+	// disp.clearScreen();
 	gui.Logo();
 	vTaskDelay(100);
 
 	ESP_LOGD(tag, "<< exit point ssd1331_final");
 	vTaskDelete(NULL);
-}*/
+}
 
 extern "C"{
 
 	extern void ap_mode_start(void *arg);
 	extern void bt_sink(void *arg);
+	// extern void ssd1331_test(void *arg);
 	void app_main();
 }
 	/* event handler for OLED screen */
@@ -133,7 +136,8 @@ extern "C"{
 
 		/* OLED Launch*/
 		ESP_LOGI("tag", ">> app_main");
-		xTaskCreatePinnedToCore(&launch_ui, "ssd1331_final", 8192, NULL, 3, NULL, 1);
+		// xTaskCreatePinnedToCore(&launch_ui, "ssd1331_final", 8192, NULL, 3, NULL, 1);
+		xTaskCreatePinnedToCore(&ssd1331_test, "ssd1331_final", 8192, NULL, 3, NULL, 1);
 		ESP_LOGI("tag", ">> app_main");
 		initArduino();
 		

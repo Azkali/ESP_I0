@@ -41,13 +41,13 @@ extern "C" {
  */
 typedef struct {
     audio_stream_type_t     type;               /*!< Type of stream */
+    int                     task_prio;          /*!< Task priority (based on freeRTOS priority) */
+    int                     task_core;          /*!< Task running in core (0 or 1) */
+    int                     task_stack;         /*!< Task stack size */
+    int                     out_rb_size;        /*!< Size of output ringbuffer */
     i2s_config_t            i2s_config;         /*!< I2S driver configurations */
     i2s_pin_config_t        i2s_pin_config;     /*!< I2S driver hardware pin configurations */
     i2s_port_t              i2s_port;           /*!< I2S driver hardware port */
-    int                     out_rb_size;        /*!< Size of output ringbuffer */
-    int                     task_stack;         /*!< Task stack size */
-    int                     task_core;          /*!< Task running in core (0 or 1) */
-    int                     task_prio;          /*!< Task priority (based on freeRTOS priority) */
 } i2s_stream_cfg_t;
 
 #define I2S_STREAM_TASK_STACK           (3072)
@@ -113,9 +113,9 @@ typedef struct {
     .task_stack = I2S_STREAM_TASK_STACK,                                        \
     .out_rb_size = I2S_STREAM_RINGBUFFER_SIZE,                                  \
     .i2s_config = {                                                             \
-        .mode = I2S_MODE_MASTER | I2S_MODE_TX | I2S_MODE_RX,                    \
+        .mode = /*static_cast<i2s_mode_t>*/(I2S_MODE_MASTER | I2S_MODE_TX | I2S_MODE_RX),                    \
         .sample_rate = 44100,                                                   \
-        .bits_per_sample = 16,                                                  \
+        .bits_per_sample = /*static_cast<i2s_bits_per_sample_t>*/(16),                                                  \
         .channel_format = I2S_CHANNEL_FMT_RIGHT_LEFT,                           \
         .communication_format = I2S_COMM_FORMAT_I2S,                            \
         .dma_buf_count = 6,     /*3*/                                           \
@@ -129,7 +129,7 @@ typedef struct {
         .data_out_num = PCM_DSIN,                                               \
         .data_in_num = PCM_DOUT,                                                \
     },                                                                          \
-    .i2s_port = 0,                                                              \
+    .i2s_port = I2S_NUM_0,                                                              \
 }
 
 /**

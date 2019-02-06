@@ -45,6 +45,9 @@
 #include "bt_keycontrol.h"
 #include "bluetooth_service.h"
 
+// #include "gui_handler.h"
+//extern GuiHandler gui;
+
 static const char *TAG = "BLUETOOTH_SERVICE";
 
 #define VALIDATE_BT(periph, ret) if (!(periph && esp_periph_get_id(periph) == PERIPH_ID_BLUETOOTH)) { \
@@ -600,7 +603,7 @@ static void bt_avrc_ct_cb(esp_avrc_ct_cb_event_t event, esp_avrc_ct_cb_param_t *
 					->refreshAlbum()
 					->scrollLine(&attrText);
 					break;
-			}	*/
+			}*/
 				// free(rc->meta_rsp.attr_text);
                 break;
         }

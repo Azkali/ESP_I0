@@ -8,3 +8,5 @@ sdkconfig.old
 \.project
 
 ESP_I0\.code-workspace
+
+components/arduino

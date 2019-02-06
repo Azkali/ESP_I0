@@ -1,4 +1,4 @@
-#include "./GenericAudioHandler.h";
+#include "GenericAudioHandler.h"
 
 static const char *TAG = "GenericAudioHandler";
 
@@ -14,18 +14,18 @@ GenericAudioHandler *GenericAudioHandler::getInstance(){
 EAudioTrackType GenericAudioHandler::getTrackType(){
 	// If we did not set a track path, then the track type has no meaning
 	if(this->currentTrackPath == nullptr){
-		throw new exception("No track set.");
+		throw new std::runtime_error("No track set.");
 	}
 	return this->trackType;
 }
 
-bool GenericAudioHandler::setTrack(String trackPath){
-	size_t lastDotPos = trackPath->find_last_of('.');
+bool GenericAudioHandler::setTrack(string trackPath){
+	size_t lastDotPos = trackPath.find_last_of('.');
 	if(lastDotPos == string::npos){
-		throw new exception("Could not get the extension");
+		throw new std::runtime_error("Could not get the extension");
 	}
-	string extension = trackPath->substr(lastDotPos + 1, string::npos)->toLower();
-	
+	string extension = trackPath.substr(lastDotPos + 1, string::npos).toLower();
+
 	// Find the format
 	EAudioTrackType newTrackType;
 	if(extension == MP3){
@@ -35,7 +35,7 @@ bool GenericAudioHandler::setTrack(String trackPath){
 	} else if(extension == FLAC){
 		newTrackType = EAudioTrackType::FLAC;
 	} else {
-		throw new exception("The extension \"" + extension + "\" is not recognized.");
+		throw new std::runtime_error("The extension \"" + extension + "\" is not recognized.");
 	}
 
 
@@ -64,13 +64,13 @@ bool GenericAudioHandler::setTrack(String trackPath){
 	this->currentTrackPath = trackPath;
 
 	ESP_LOGI(TAG, "[3.6] Setup uri (file as fatfs_stream, adequate decoder, and default output is i2s)");
-	audio_element_set_uri(this->fatfsStreamReader, this->currentTrackPath);
+	audio_element_set_uri(this->fatfsStreamReader, (const char*)this->currentTrackPath);
 
 
 	return true;
 }
 
-void GenericAudioHandler::allocateFlacResources{
+void GenericAudioHandler::allocateFlacResources(){
 	ESP_LOGI(TAG, "[3.3] Create flac decoder to decode flac file");
 	this->decoderConfig = new flac_decoder_cfg_t();
 	*(this->decoderConfig) = DEFAULT_FLAC_DECODER_CONFIG();
@@ -81,10 +81,10 @@ void GenericAudioHandler::allocateFlacResources{
 	audio_pipeline_link(this->pipeline, (const char *[]) {"file", FLAC, "i2s"}, 3);
 }
 
-void GenericAudioHandler::allocateAacResources{
+void GenericAudioHandler::allocateAacResources(){
 }
 
-void GenericAudioHandler::allocateMp3Resources{
+void GenericAudioHandler::allocateMp3Resources(){
 }
 
 bool GenericAudioHandler::play(){
@@ -160,4 +160,98 @@ void GenericAudioHandler::releaseTrackResources(){
 	this->currentTrackPath = nullptr;
     audio_pipeline_unregister(this->pipeline, this->audioDecoder);
     audio_element_deinit(this->audioDecoder);
+}
+
+void GenericAudioHandler::eventListener(){
+	 ESP_LOGI(TAG, "[ 4 ] Setup event listener");
+    audio_event_iface_cfg_t evt_cfg = AUDIO_EVENT_IFACE_DEFAULT_CFG();
+    this->evt = audio_event_iface_init(&evt_cfg);
+
+    ESP_LOGI(TAG, "[4.1] Listening event from all elements of pipeline");
+    audio_pipeline_set_listener(pipeline, evt);
+
+    ESP_LOGI(TAG, "[4.2] Listening event from peripherals");
+    audio_event_iface_set_listener(esp_periph_get_event_iface(), evt);
+
+
+    ESP_LOGI(TAG, "[ 5 ] Start audio_pipeline");
+    audio_pipeline_run(pipeline);
+
+    ESP_LOGI(TAG, "[ 6 ] Listen for all pipeline events");
+    while (1) {
+        esp_err_t ret = audio_event_iface_listen(evt, &msg, portMAX_DELAY);
+        if (ret != ESP_OK) {
+            ESP_LOGE(TAG, "[ * ] Event interface error : %d", ret);
+            continue;
+        }
+
+        if (this->msg.source_type == AUDIO_ELEMENT_TYPE_ELEMENT && this->msg.source == (void *) this->decoderConfig
+            && this->msg.cmd == AEL_MSG_CMD_REPORT_MUSIC_INFO) {
+            this->music_info = {0};
+            audio_element_getinfo(this->decoderConfig, &music_info);
+
+            ESP_LOGI(TAG, "[ * ] Receive music info from mp3 decoder, sample_rates=%d, bits=%d, ch=%d",
+                     music_info.sample_rates, music_info.bits, music_info.channels);
+
+            audio_element_setinfo(this->i2sStreamWriter, &music_info);
+            i2s_stream_set_clk(this->i2sStreamWriter, music_info.sample_rates, music_info.bits, music_info.channels);
+            continue;
+        }
+
+        /* Stop when the last pipeline element (i2s_stream_writer in this case) receives stop event */
+        if (this->msg.source_type == AUDIO_ELEMENT_TYPE_ELEMENT && this->msg.source == (void *) this->i2sStreamWriter
+            && this->msg.cmd == AEL_MSG_CMD_REPORT_STATUS && (int) this->msg.data == AEL_STATUS_STATE_STOPPED) {
+            ESP_LOGW(TAG, "[ * ] Stop event received");
+            break;
+        }
+    }
+}
+
+void GenericAudioHandler::GpioBtSinkHandler(){
+
+	ESP_LOGI(TAG, "[4.1] Initialize Buttons peripheral");
+	// Setup BUTTON peripheral
+	periph_button_cfg_t btn_cfg = {
+		.gpio_mask = GPIO_SEL_37 | GPIO_SEL_38 | GPIO_SEL_39
+	};
+	this->button_handle = periph_button_init(&btn_cfg);
+	
+	// Create case for A2DP-SINK and A2DP-SRC
+    ESP_LOGI(TAG, "[4.2] Create Bluetooth peripheral");
+    this->bt_periph = bluetooth_service_create_periph();
+
+    ESP_LOGI(TAG, "[4.2] Start all peripherals");
+    /*esp_periph_start(touch_periph);*/
+	esp_periph_start(button_handle);
+    esp_periph_start(this->bt_periph);
+
+	if (this->msg.source_type == PERIPH_ID_BUTTON
+	&& this->msg.cmd == PERIPH_BUTTON_PRESSED
+	&& this->msg.source == (void *)button_handle) {
+
+		if ((int) this->msg.data == GPIO_NUM_37) {
+			ESP_LOGI(TAG, "[ * ] [Set] touch tap event %d",(int) msg.cmd);
+			periph_bluetooth_pause(this->bt_periph);
+		} else if ((int) this->msg.data == GPIO_NUM_38) {
+			ESP_LOGI(TAG, "[ * ] [Vol+] touch tap event");
+			periph_bluetooth_next(this->bt_periph);
+		} else if ((int) this->msg.data == GPIO_NUM_39) {
+			ESP_LOGI(TAG, "[ * ] [Vol-] touch tap event");
+			periph_bluetooth_prev(this->bt_periph);
+		}
+	}
+	else if (this->msg.source_type == PERIPH_ID_BUTTON
+            && this->msg.cmd == PERIPH_BUTTON_LONG_PRESSED
+            && this->msg.source == (void *)button_handle) {
+			if ((int) this->msg.data == GPIO_NUM_37) {
+				ESP_LOGI(TAG, "[ * ] [Set] touch tap event %d",(int) msg.cmd);
+				periph_bluetooth_play(this->bt_periph);
+			} else if ((int) this->msg.data == GPIO_NUM_38) {
+				ESP_LOGI(TAG, "[ * ] [Vol+] touch tap event");
+				periph_bluetooth_next(this->bt_periph);
+			} else if ((int) this->msg.data == GPIO_NUM_39) {
+				ESP_LOGI(TAG, "[ * ] [Vol-] touch tap event");
+				periph_bluetooth_prev(this->bt_periph);
+			}
+		}
 }

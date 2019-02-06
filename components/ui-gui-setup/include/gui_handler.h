@@ -9,11 +9,9 @@
 
 //#define USE_ADAFRUIT_LIB
 
-#include <string>
+#include <Arduino.h>
 #include <string.h>
 #include "esp_log.h"
-
-using namespace std;
 
 #if defined USE_ADAFRUIT_LIB
 	#include "Adafruit_SSD1331.h"

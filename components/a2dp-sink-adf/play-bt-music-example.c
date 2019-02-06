@@ -23,6 +23,7 @@
 //#include "audio_hal.h"
 //#include "board.h"
 #include "bluetooth_service.h"
+// #include "gui_handler.h"
 
 #define LYRAT_TOUCH_SET     GPIO_NUM_37//TOUCH_PAD_NUM9
 #define LYRAT_TOUCH_PLAY    -1//TOUCH_PAD_NUM8
@@ -50,6 +51,7 @@ void bt_sink(void *arg)
     ESP_LOGI(TAG, "[ 1 ] Create Bluetooth service");
     bluetooth_service_cfg_t bt_cfg = {
         .device_name = "ESP_I0",
+		.remote_name = "",
         .mode = BLUETOOTH_A2DP_SINK,
     };
     bluetooth_service_start(&bt_cfg);
@@ -61,8 +63,42 @@ void bt_sink(void *arg)
     audio_hal_ctrl_codec(hal, AUDIO_HAL_CODEC_MODE_DECODE, AUDIO_HAL_CTRL_START);*/
 
     ESP_LOGI(TAG, "[2.1] Create i2s stream to write data to codec chip");
-    i2s_stream_cfg_t i2s_cfg = I2S_STREAM_EXTERNAL_DAC_CFG_DEFAULT();
+	
+	i2s_stream_cfg_t i2s_cfg = I2S_STREAM_EXTERNAL_DAC_CFG_DEFAULT();
+    /*i2s_stream_cfg_t i2s_cfg = { };
     i2s_cfg.type = AUDIO_STREAM_WRITER;
+    i2s_cfg.task_prio = I2S_STREAM_TASK_PRIO;
+    i2s_cfg.task_core = I2S_STREAM_TASK_CORE;
+    i2s_cfg.task_stack = I2S_STREAM_TASK_STACK;
+    i2s_cfg.out_rb_size = I2S_STREAM_RINGBUFFER_SIZE;
+
+	i2s_config_t i2s_conf;
+	i2s_conf = { };
+
+	i2s_conf.mode =  static_cast<i2s_mode_t>(I2S_MODE_MASTER | I2S_MODE_TX | I2S_MODE_RX);
+	i2s_conf.sample_rate = 44100;
+	i2s_conf.bits_per_sample =  static_cast<i2s_bits_per_sample_t>(16);
+	i2s_conf.channel_format = I2S_CHANNEL_FMT_RIGHT_LEFT;
+	i2s_conf.communication_format = I2S_COMM_FORMAT_I2S;
+	i2s_conf.dma_buf_count = 6;*/     /*3*/
+	//i2s_conf.dma_buf_len = 200;      /*300*/
+	/*i2s_conf.use_apll = 0;
+	i2s_conf.intr_alloc_flags = ESP_INTR_FLAG_LEVEL2;
+
+	i2s_cfg.i2s_config = i2s_conf;
+	
+	i2s_pin_config_t i2s_pin_conf;
+	i2s_pin_conf = { };
+
+    i2s_pin_conf.bck_io_num = PCM_SCLK;
+    i2s_pin_conf.ws_io_num = PCM_LCLK;
+    i2s_pin_conf.data_out_num = PCM_DSIN;
+    i2s_pin_conf.data_in_num = PCM_DOUT;
+
+	i2s_cfg.i2s_pin_config = i2s_pin_conf;
+
+    i2s_cfg.i2s_port = I2S_NUM_0;*/
+	
     i2s_stream_writer = i2s_stream_init(&i2s_cfg);
 
     ESP_LOGI(TAG, "[ 3 ] Create audio pipeline for playback");
