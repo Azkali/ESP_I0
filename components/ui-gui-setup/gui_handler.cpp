@@ -4,11 +4,7 @@
  *  Created on: 11.06.2017
  *      Author: chegewara
  */
-#include <freertos/FreeRTOS.h>
-#include <freertos/task.h>
-#include <math.h>
 #include "gui_handler.h"
-#include "bluetooth_service.h"
 
 static const uint8_t angular[]  = {
 	// 'violet, 96x64px
@@ -71,10 +67,10 @@ GuiHandler::GuiHandler(DISP_DESC *disp) {
 	}
 }
 
-/*void GuiHandler::setDisplay(DISP_DESC *disp){
+void GuiHandler::setDisplay(DISP_DESC *disp){
 	display = disp;
 	y0 = display->height()/2;
-}*/
+}
 /*
 void GuiHandler::Menu() {
 	display->setCursor(0, 0);
@@ -87,35 +83,35 @@ void GuiHandler::Menu() {
 }
 */
 void GuiHandler::Logo() {
-	display->drawBitmap(1, 1, angular, 96, 64, TFT_WHITE);
+	display->drawBitmap(1, 1, angular, TFT_HEIGHT, TFT_WIDTH, TFT_WHITE);
 }
 
 void GuiHandler::welcomeScreen() {
 	display->setCursor(0, 0);
 	display->setTextColor(TFT_WHITE);
-	display->setTextSize(1);
-	println((char*) "Wello Horld!");
+	display->setTextSize(3);
+	display->drawString((String)"Wello Horld!", 0, display->getCursorY());
 	display->setCursor(0, display->getCursorY() + 8);
 	display->setTextColor(TFT_YELLOW);
-	display->setTextSize(1);
-	println((char*) "Modularity");
+	display->setTextSize(3);
+	display->drawString((String)"Modularity", 0, display->getCursorY() + 8 );
 	display->setCursor(0, display->getCursorY() + 9);
 	display->setTextColor(TFT_YELLOW);
-	display->setTextSize(1);
-	println((char*) "in the palm of your hand");
+	display->setTextSize(3);
+	display->drawString((String)"in the palm of your hand", 0, display->getCursorY() + 9 );
 	display->setCursor(0, display->getCursorY() + 10);
 	display->setTextColor(TFT_YELLOW);
-	display->setTextSize(1);
-	println((char*) "anywhere !");
+	display->setTextSize(3);
+	display->drawString((String)"anywhere !", 0, display->getCursorY() + 10 );
 	display->setCursor(0, display->getCursorY() + 11);
 	display->setTextColor(TFT_RED);
-	display->setTextSize(1);
-	println((char*) "ESP_I0");
+	display->setTextSize(3);
+	display->drawString((String)"ESP_I0", 0, display->getCursorY() + 11 );
 	display->setCursor(0, display->getCursorY() + 13);
-	display->setTextSize(1);
+	display->setTextSize(3);
 	display->setTextColor(TFT_BLUE);
-	println((char*) "In FULL COLOR!");
-	println((char*) "");	
+	display->drawString((String)"In FULL COLOR!", 0, display->getCursorY() + 13 );
+	display->drawString((String)"", 0, display->getCursorY() + 13);	
 }
 
 
@@ -148,35 +144,27 @@ GuiHandler *GuiHandler::refreshAlbum(){
 	return this;
 }
 
-
-/*GuiHandler *GuiHandler::scrollLine(String *line) {
-	display->ScrollSet(12,0,display->TFTHEIGHT,0,10);
-	display->scroll();
-	return this;
-}*/
+// GuiHandler *GuiHandler::scrollLine(String *line) {
+//  display->ScrollSet(12,0,display->TFTHEIGHT,0,10);
+// 	display->scroll();
+// 	return this;
+// }
 
 GuiHandler *GuiHandler::refreshScreen(){
 	refreshTitle();
 	refreshArtist();
 	return refreshAlbum();
-	 
 }
 
 void GuiHandler::refreshRow(int16_t posx, String *datdata, color_t color){
 	//display->clearWindow(0, posx, display->width(), posx + INTERLINE);
+	// display->clear()
 	display->fillScreen(TFT_BLACK);
 	display->setCursor(0, posx + 2);
 	display->setTextColor(color);
 	display->setTextSize(1);
 	display->setTextWrap(false);
 	char *newStr = strdup(datdata->c_str());
-	println(newStr);
+	display->drawString(newStr, 0, posx + 2);
 	free(newStr);
 }
-
-/*void GuiHandler::println (char* text){
-	while(*text != 0) {
-		display->write(*text);
-		text++;
-	}
-}*/

@@ -45,8 +45,7 @@
 #include "bt_keycontrol.h"
 #include "bluetooth_service.h"
 
-// #include "gui_handler.h"
-//extern GuiHandler gui;
+#include "gui_handler.h"
 
 static const char *TAG = "BLUETOOTH_SERVICE";
 
@@ -91,7 +90,7 @@ static void bt_a2d_sink_cb(esp_a2d_cb_event_t event, esp_a2d_cb_param_t *p_param
 {
     esp_a2d_cb_param_t *a2d = NULL;
     switch (event) {
-        case ESP_A2D_CONNECTION_STATE_EVT:
+        case ESP_A2D_CONNECTION_STATE_EVT: {
             a2d = (esp_a2d_cb_param_t *)(p_param);
             uint8_t *bda = a2d->conn_stat.remote_bda;
             ESP_LOGD(TAG, "A2DP connection state: %s, [%02x:%02x:%02x:%02x:%02x:%02x]",
@@ -119,10 +118,11 @@ static void bt_a2d_sink_cb(esp_a2d_cb_event_t event, esp_a2d_cb_param_t *p_param
                 if (g_bt_service->periph) {
                     esp_periph_send_event(g_bt_service->periph, PERIPH_BLUETOOTH_DISCONNECTED, NULL, 0);
                 }
-            }
+            }}
 
             break;
         case ESP_A2D_AUDIO_STATE_EVT:
+		{
             a2d = (esp_a2d_cb_param_t *)(p_param);
             ESP_LOGD(TAG, "A2DP audio state: %s", audio_state_str[a2d->audio_stat.state]);
             g_bt_service->audio_state = a2d->audio_stat.state;
@@ -140,9 +140,9 @@ static void bt_a2d_sink_cb(esp_a2d_cb_event_t event, esp_a2d_cb_param_t *p_param
             } else if (ESP_A2D_AUDIO_STATE_STOPPED == a2d->audio_stat.state) {
                 esp_periph_send_event(g_bt_service->periph, PERIPH_BLUETOOTH_AUDIO_STOPPED, NULL, 0);
             }
-
+		}
             break;
-        case ESP_A2D_AUDIO_CFG_EVT:
+        case ESP_A2D_AUDIO_CFG_EVT:{
             a2d = (esp_a2d_cb_param_t *)(p_param);
             ESP_LOGD(TAG, "A2DP audio stream configuration, codec type %d", a2d->audio_cfg.mcc.type);
             if (a2d->audio_cfg.mcc.type == ESP_A2D_MCT_SBC) {
@@ -167,10 +167,10 @@ static void bt_a2d_sink_cb(esp_a2d_cb_event_t event, esp_a2d_cb_param_t *p_param
                 audio_element_setinfo(g_bt_service->stream, &bt_info);
                 audio_element_report_info(g_bt_service->stream);
             }
-            break;
-        default:
+            break;}
+        default:{
             ESP_LOGD(TAG, "Unhandled A2DP event: %d", event);
-            break;
+            break;}
     }
 }
 
@@ -398,7 +398,7 @@ static void bt_a2d_source_cb(esp_a2d_cb_event_t event, esp_a2d_cb_param_t *param
                 } else if (param->media_ctrl_stat.cmd != ESP_A2D_MEDIA_CTRL_SUSPEND) {
                     // not started successfully, transfer to idle state
                     ESP_LOGI(TAG, "a2dp media start failed.");
-                    g_bt_service->audio_state = BT_SOURCE_STATE_IDLE;
+                    g_bt_service->audio_state = (esp_a2d_audio_state_t) BT_SOURCE_STATE_IDLE;
                 }
             } else if (event == ESP_A2D_CONNECTION_STATE_EVT &&
                             param->conn_stat.state == ESP_A2D_CONNECTION_STATE_DISCONNECTED) {
@@ -423,7 +423,7 @@ esp_err_t bluetooth_service_start(bluetooth_service_cfg_t *config)
         return ESP_FAIL;
     }
 
-    g_bt_service = calloc(1, sizeof(bluetooth_service_t));
+    g_bt_service = (bluetooth_service_t *) calloc(1, sizeof(bluetooth_service_t));
     AUDIO_MEM_CHECK(TAG, g_bt_service, return ESP_ERR_NO_MEM);
 
     ESP_ERROR_CHECK(esp_bt_controller_mem_release(ESP_BT_MODE_BLE));
@@ -535,7 +535,7 @@ audio_element_handle_t bluetooth_service_create_stream()
         return NULL;
     }
 
-    audio_element_cfg_t cfg = DEFAULT_AUDIO_ELEMENT_CONFIG();
+    audio_element_cfg_t cfg = {};
     cfg.task_stack = -1; // No need task
     cfg.destroy = _bt_stream_destroy;
     cfg.tag = "bt";
@@ -581,29 +581,29 @@ static void bt_avrc_ct_cb(esp_avrc_ct_cb_event_t event, esp_avrc_ct_cb_param_t *
             }
         case ESP_AVRC_CT_METADATA_RSP_EVT: {
 			ESP_LOGD(TAG, "AVRC metadata rsp: attribute id 0x%x, %s", rc->meta_rsp.attr_id, rc->meta_rsp.attr_text);
-			/*String attrText((char*)rc->meta_rsp.attr_text);
+			String attrText((char*)rc->meta_rsp.attr_text);
 			switch(rc->meta_rsp.attr_id) {
 				case ESP_AVRC_MD_ATTR_TITLE:
 					gui
 					.setTitle(attrText)
-					->refreshTitle()
-					->scrollLine(&attrText);
+					->refreshTitle();
+					// ->scrollLine(&attrText);
 					break;
 
 				case ESP_AVRC_MD_ATTR_ARTIST:
 					gui
 					.setArtist(attrText)
-					->refreshArtist()
-					->scrollLine(&attrText);
+					->refreshArtist();
+					// ->scrollLine(&attrText);
 					break;
 
 				case ESP_AVRC_MD_ATTR_ALBUM:
 					gui
 					.setAlbum(attrText)
-					->refreshAlbum()
-					->scrollLine(&attrText);
+					->refreshAlbum();
+					// ->scrollLine(&attrText);
 					break;
-			}*/
+			}
 				// free(rc->meta_rsp.attr_text);
                 break;
         }

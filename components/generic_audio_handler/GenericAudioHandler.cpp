@@ -13,7 +13,7 @@ GenericAudioHandler *GenericAudioHandler::getInstance(){
 
 EAudioTrackType GenericAudioHandler::getTrackType(){
 	// If we did not set a track path, then the track type has no meaning
-	if(this->currentTrackPath == nullptr){
+	if(this->currentTrackPath.empty()){
 		throw new std::runtime_error("No track set.");
 	}
 	return this->trackType;
@@ -24,22 +24,23 @@ bool GenericAudioHandler::setTrack(string trackPath){
 	if(lastDotPos == string::npos){
 		throw new std::runtime_error("Could not get the extension");
 	}
-	string extension = trackPath.substr(lastDotPos + 1, string::npos).toLower();
+	string extension = trackPath.substr(lastDotPos + 1, string::npos);
+	std::transform( extension.begin() , extension.end(), extension.begin(), ::tolower);
 
 	// Find the format
 	EAudioTrackType newTrackType;
-	if(extension == MP3){
+	if(extension == track_type[0]){
 		newTrackType = EAudioTrackType::MP3;
-	} else if(extension == AAC){
+	} else if(extension == track_type[1]){
 		newTrackType = EAudioTrackType::AAC;
-	} else if(extension == FLAC){
+	} else if(extension == track_type[2]){
 		newTrackType = EAudioTrackType::FLAC;
 	} else {
 		throw new std::runtime_error("The extension \"" + extension + "\" is not recognized.");
 	}
 
 
-	if(this->currentTrackPath != nullptr && newTrackType != this->trackType){
+	if(!this->currentTrackPath.empty() && newTrackType != this->trackType){
 		this->releaseTrackResources();
 
 		// Switch on track type to initialize the correct decoder
@@ -64,7 +65,7 @@ bool GenericAudioHandler::setTrack(string trackPath){
 	this->currentTrackPath = trackPath;
 
 	ESP_LOGI(TAG, "[3.6] Setup uri (file as fatfs_stream, adequate decoder, and default output is i2s)");
-	audio_element_set_uri(this->fatfsStreamReader, (const char*)this->currentTrackPath);
+	audio_element_set_uri(this->fatfsStreamReader, this->currentTrackPath.c_str());
 
 
 	return true;
@@ -74,11 +75,13 @@ void GenericAudioHandler::allocateFlacResources(){
 	ESP_LOGI(TAG, "[3.3] Create flac decoder to decode flac file");
 	this->decoderConfig = new flac_decoder_cfg_t();
 	*(this->decoderConfig) = DEFAULT_FLAC_DECODER_CONFIG();
-	this->audioDecoder = flac_decoder_init(this->decoderConfig);
+	this->audioDecoder = flac_decoder_init((flac_decoder_cfg_t*)this->decoderConfig);
 
-	audio_pipeline_register(this->pipeline, this->audioDecoder, FLAC);
+
+	audio_pipeline_register(this->pipeline, this->audioDecoder, track_type[2]);
 	ESP_LOGI(TAG, "[3.5] Link it together [sdcard]-->fatfs_stream-->flac_decoder-->i2s_stream-->[codec_chip]");
-	audio_pipeline_link(this->pipeline, (const char *[]) {"file", FLAC, "i2s"}, 3);
+	static const char *options[] = {"file", track_type[2], "i2s"};
+	audio_pipeline_link(this->pipeline, options, 3);
 }
 
 void GenericAudioHandler::allocateAacResources(){
@@ -88,12 +91,14 @@ void GenericAudioHandler::allocateMp3Resources(){
 }
 
 bool GenericAudioHandler::play(){
-
+	// Change later
+	return 1;
 }
 
 bool GenericAudioHandler::play(string trackPath){
 	this->setTrack(trackPath);
 	this->play();
+	return 1;
 }
 
 
@@ -106,19 +111,54 @@ GenericAudioHandler::GenericAudioHandler(){
 
 void GenericAudioHandler::allocateResources(){
 	ESP_LOGI(TAG, "[2.1] Create i2s stream to write data to codec chip");
-    i2s_stream_cfg_t i2s_cfg = I2S_STREAM_EXTERNAL_DAC_CFG_DEFAULT();
+    // this->i2s_cfg = new i2s_stream_cfg_t();
+	this->i2s_cfg = {};
     i2s_cfg.type = AUDIO_STREAM_WRITER;
+    i2s_cfg.task_prio = I2S_STREAM_TASK_PRIO;
+    i2s_cfg.task_core = I2S_STREAM_TASK_CORE;
+    i2s_cfg.task_stack = I2S_STREAM_TASK_STACK;
+    i2s_cfg.out_rb_size = I2S_STREAM_RINGBUFFER_SIZE;
+
+	i2s_config_t i2s_conf;
+	i2s_conf = { };
+
+	i2s_conf.mode =  static_cast<i2s_mode_t>(I2S_MODE_MASTER | I2S_MODE_TX | I2S_MODE_RX);
+	i2s_conf.sample_rate = 44100;
+	i2s_conf.bits_per_sample =  static_cast<i2s_bits_per_sample_t>(16);
+	i2s_conf.channel_format = I2S_CHANNEL_FMT_RIGHT_LEFT;
+	i2s_conf.communication_format = I2S_COMM_FORMAT_I2S;
+	i2s_conf.dma_buf_count = 6;     /*3*/
+	i2s_conf.dma_buf_len = 200;      /*300*/
+	i2s_conf.use_apll = 0;
+	i2s_conf.intr_alloc_flags = ESP_INTR_FLAG_LEVEL2;
+
+	i2s_cfg.i2s_config = i2s_conf;
+	
+	i2s_pin_config_t i2s_pin_conf;
+	i2s_pin_conf = { };
+
+    i2s_pin_conf.bck_io_num = PCM_SCLK;
+    i2s_pin_conf.ws_io_num = PCM_LCLK;
+    i2s_pin_conf.data_out_num = PCM_DSIN;
+    i2s_pin_conf.data_in_num = PCM_DOUT;
+
+	i2s_cfg.i2s_pin_config = i2s_pin_conf;
+
+    i2s_cfg.i2s_port = I2S_NUM_0;
+
     this->i2sStreamWriter = i2s_stream_init(&i2s_cfg);
 
     ESP_LOGI(TAG, "[3.0] Create audio pipeline for playback");
-    audio_pipeline_cfg_t pipeline_cfg = DEFAULT_AUDIO_PIPELINE_CONFIG();
+    // this->pipeline_cfg = new audio_pipeline_cfg_t();
+	this->pipeline_cfg = DEFAULT_AUDIO_PIPELINE_CONFIG();
     this->pipeline = audio_pipeline_init(&pipeline_cfg);
     mem_assert(this->pipeline);
 
     ESP_LOGI(TAG, "[3.1] Create fatfs stream to read data from sdcard");
-    fatfs_stream_cfg_t fatfs_cfg = FATFS_STREAM_CFG_DEFAULT();
+    // this->fatfs_cfg = new fatfs_stream_cfg_t();
+	this->fatfs_cfg = {};
     fatfs_cfg.type = AUDIO_STREAM_READER;
-    this->fatfsStreamReader = fatfs_stream_init(&fatfs_cfg);
+	this->fatfsStreamReader = fatfs_stream_init(&fatfs_cfg);
 
 
 
@@ -188,7 +228,7 @@ void GenericAudioHandler::eventListener(){
         if (this->msg.source_type == AUDIO_ELEMENT_TYPE_ELEMENT && this->msg.source == (void *) this->decoderConfig
             && this->msg.cmd == AEL_MSG_CMD_REPORT_MUSIC_INFO) {
             this->music_info = {0};
-            audio_element_getinfo(this->decoderConfig, &music_info);
+            audio_element_getinfo((audio_element_handle_t) this->decoderConfig, &music_info);
 
             ESP_LOGI(TAG, "[ * ] Receive music info from mp3 decoder, sample_rates=%d, bits=%d, ch=%d",
                      music_info.sample_rates, music_info.bits, music_info.channels);

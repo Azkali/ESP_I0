@@ -6,5 +6,3 @@
 
 # COMPONENT_SRCDIRS :=  . lib
 # COMPONENT_PRIV_INCLUDEDIRS := lib/include
-# CXXFLAGS+=-fexceptions
-# CXXFLAGS+= -std=c++11

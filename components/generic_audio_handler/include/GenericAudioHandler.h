@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <iostream>
+#include <algorithm>
 #include <typeinfo> 
 #include <string.h>
 #include "esp_log.h"
@@ -19,6 +20,8 @@
 #include "fatfs_stream.h"
 #include "i2s_stream.h"
 #include "mp3_decoder.h"
+#include "flac_decoder.h"
+#include "aac_decoder.h"
 #include "esp_peripherals.h"
 #include "periph_button.h"
 
@@ -40,6 +43,8 @@ enum EAudioTrackType{
 	FLAC,
 	AAC
 };
+
+const char *track_type[] = { "mp3","flac","aac" };
 
 class GenericAudioHandler
 {
@@ -70,9 +75,13 @@ private:
 	void GpioBtSinkHandler();
 
 	// Properties
-	void *decoderConfig;
+	flac_decoder_cfg_t *decoderConfig;
+	i2s_stream_cfg_t i2s_cfg;
+	audio_pipeline_cfg_t pipeline_cfg;
+	fatfs_stream_cfg_t fatfs_cfg;
 	EAudioTrackType trackType;
 	string currentTrackPath;
+	
 	// Pipeline & audio properties
 	audio_pipeline_handle_t pipeline;
 	audio_element_handle_t fatfsStreamReader;

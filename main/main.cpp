@@ -40,10 +40,14 @@
 //#include "deep_sleep.h"
 //#include "play_pause.h"
 
+//ui-GUI
+#include "gui_handler.h"
+
 #include "sdkconfig.h"
 #include "esp_event.h"
 #include "esp_event_loop.h"
 #include "esp_avrc_api.h"
+#include "sdkconfig.h"
 
 
 //TFT_eSPI
@@ -52,10 +56,6 @@
 
 #define TFT_GREY 0x5AEB // New colour
 
-//ui-GUI
-#include "gui_handler.h"
-
-#include "sdkconfig.h"
 
 static char tag[] = "SSD1331_test";
 
@@ -71,6 +71,7 @@ static char tag[] = "SSD1331_test";
 	TFT_eSPI disp = TFT_eSPI();
 #endif
 
+GuiHandler gui = GuiHandler(&disp);
 //TFT_eSPI
 // TFT_eSPI tft = TFT_eSPI();  // Invoke library
 
@@ -93,20 +94,21 @@ static char tag[] = "SSD1331_test";
 	vTaskDelete(NULL);
 }
 */
+
 void ssd1331_test(void *ignore) {
 	ESP_LOGD(tag, ">> entry point ssd1331_final");
 	// Initialize display
-	disp.begin();
-	// disp.clearScreen();
-	disp.setTextWrap(0);
-	disp.setRotation(2);
-
 	// gui.setDisplay(&disp);
-	gui.Logo();
+	disp.init();
+	disp.begin();
+	// disp.setTextWrap(0);
+	disp.setRotation(4);
+
+	// gui.Logo();
 	vTaskDelay(1000);
 	// disp.clearScreen();
 	// disp.clearScreen();
-	
+
 	gui.welcomeScreen();
 	vTaskDelay(1000);
 	// disp.clearScreen();
@@ -118,21 +120,20 @@ void ssd1331_test(void *ignore) {
 	vTaskDelete(NULL);
 }
 
-extern "C"{
-
+extern "C" {
 	extern void ap_mode_start(void *arg);
-	extern void bt_sink(void *arg);
-	// extern void ssd1331_test(void *arg);
+	// extern void bt_sink(void *arg);
+	// extern void ssd1331_test(void *ignore);
 	void app_main();
-}
+
 	/* event handler for OLED screen */
 	esp_err_t event_handler(void *ctx, system_event_t *event)
 	{
 		return ESP_OK;
 	}
-
-	void app_main(/*void* arg*/) {
-		xTaskCreatePinnedToCore(&bt_sink, "bt-sink", 8192, NULL, 3, NULL, 0); 
+}
+	void app_main() {
+		// xTaskCreatePinnedToCore(&bt_sink, "bt-sink", 8192, NULL, 3, NULL, 0); 
 
 		/* OLED Launch*/
 		ESP_LOGI("tag", ">> app_main");

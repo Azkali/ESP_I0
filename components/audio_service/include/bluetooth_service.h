@@ -29,7 +29,7 @@
 #include "audio_error.h"
 #include "audio_element.h"
 #include "esp_peripherals.h"
-#include "Arduino.h"
+#include <string.h>
 
 #ifdef __cplusplus
 extern "C" {

@@ -114,7 +114,7 @@ static esp_err_t _i2s_open(audio_element_handle_t self)
         i2s_info.sample_rates = 16000;
         audio_element_getinfo(self, &i2s_info);
         ESP_LOGI(TAG, "AUDIO_STREAM_READER,Rate:%d,ch:%d", i2s_info.sample_rates, i2s_info.channels);
-        if (i2s_set_clk(i2s->config.i2s_port, i2s_info.sample_rates, i2s_info.bits, i2s_info.channels) == ESP_FAIL) {
+        if (i2s_set_clk(i2s->config.i2s_port, i2s_info.sample_rates, (i2s_bits_per_sample_t)i2s_info.bits, (i2s_channel_t)i2s_info.channels) == ESP_FAIL) {
             ESP_LOGE(TAG, "i2s_set_clk failed, type = %d", i2s->config.type);
             return ESP_FAIL;
         }
@@ -138,7 +138,7 @@ static esp_err_t _i2s_close(audio_element_handle_t self)
     i2s_stream_t *i2s = (i2s_stream_t *)audio_element_getdata(self);
     int index = i2s->config.i2s_config.dma_buf_count;
     size_t bytes_written = 0;
-    uint8_t *buf = audio_calloc(1, i2s->config.i2s_config.dma_buf_len * 4);
+    uint8_t *buf = (uint8_t *) audio_calloc(1, i2s->config.i2s_config.dma_buf_len * 4);
 
     AUDIO_MEM_CHECK(TAG, buf, return ESP_ERR_NO_MEM);
 
@@ -211,7 +211,7 @@ static int _i2s_process(audio_element_handle_t self, char *in_buffer, int in_len
     } else {
         i2s_stream_t *i2s = (i2s_stream_t *)audio_element_getdata(self);
         int index = i2s->config.i2s_config.dma_buf_count;
-        uint8_t *buf = audio_calloc(1, i2s->config.i2s_config.dma_buf_len * 4);
+        uint8_t *buf = (uint8_t *) audio_calloc(1, i2s->config.i2s_config.dma_buf_len * 4);
 
         AUDIO_MEM_CHECK(TAG, buf, return ESP_FAIL);
 
@@ -241,7 +241,7 @@ esp_err_t i2s_stream_set_clk(audio_element_handle_t i2s_stream, int rate, int bi
     i2s_info.sample_rates = rate;
     audio_element_setinfo(i2s_stream, &i2s_info);
 
-    if (i2s_set_clk(i2s->config.i2s_port, rate, bits, ch) == ESP_FAIL) {
+    if (i2s_set_clk(i2s->config.i2s_port, rate, (i2s_bits_per_sample_t) bits, (i2s_channel_t) ch) == ESP_FAIL) {
         ESP_LOGE(TAG, "i2s_set_clk failed, type = %d,port:%d", i2s->config.type, i2s->config.i2s_port);
         err = ESP_FAIL;
     }
@@ -253,11 +253,11 @@ esp_err_t i2s_stream_set_clk(audio_element_handle_t i2s_stream, int rate, int bi
 
 audio_element_handle_t i2s_stream_init(i2s_stream_cfg_t *config)
 {
-    audio_element_cfg_t cfg = DEFAULT_AUDIO_ELEMENT_CONFIG();
-    audio_element_handle_t el;
+	audio_element_cfg_t cfg = {};
+	audio_element_handle_t el;
     cfg.open = _i2s_open;
     cfg.close = _i2s_close;
-    cfg.process = _i2s_process;
+    cfg.process = (process_func) _i2s_process;
     cfg.destroy = _i2s_destroy;
     cfg.task_stack = config->task_stack;
     cfg.task_prio = config->task_prio;
@@ -265,7 +265,7 @@ audio_element_handle_t i2s_stream_init(i2s_stream_cfg_t *config)
     cfg.out_rb_size = config->out_rb_size;
     cfg.tag = "iis";
     cfg.buffer_len = I2S_STREAM_BUF_SIZE;
-    i2s_stream_t *i2s = audio_calloc(1, sizeof(i2s_stream_t));
+    i2s_stream_t *i2s = (i2s_stream_t *) audio_calloc(1, sizeof(i2s_stream_t));
 
     AUDIO_MEM_CHECK(TAG, i2s, return NULL);
 
@@ -273,9 +273,9 @@ audio_element_handle_t i2s_stream_init(i2s_stream_cfg_t *config)
     i2s->type = config->type;
 
     if (config->type == AUDIO_STREAM_READER) {
-        cfg.read = _i2s_read;
+        cfg.read = (stream_func) _i2s_read;
     } else if (config->type == AUDIO_STREAM_WRITER) {
-        cfg.write = _i2s_write;
+        cfg.write = (stream_func) _i2s_write;
     }
     el = audio_element_init(&cfg);
 

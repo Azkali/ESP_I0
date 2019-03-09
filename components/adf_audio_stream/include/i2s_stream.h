@@ -29,7 +29,8 @@
 #include "audio_common.h"
 #include "board.h"
 #include "audio_error.h"
-
+#include <stdlib.h>
+#include <stdio.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -113,9 +114,9 @@ typedef struct {
     .task_stack = I2S_STREAM_TASK_STACK,                                        \
     .out_rb_size = I2S_STREAM_RINGBUFFER_SIZE,                                  \
     .i2s_config = {                                                             \
-        .mode = /*static_cast<i2s_mode_t>*/(I2S_MODE_MASTER | I2S_MODE_TX | I2S_MODE_RX),                    \
+        .mode = (i2s_mode_t)(I2S_MODE_MASTER | I2S_MODE_TX | I2S_MODE_RX),                    \
         .sample_rate = 44100,                                                   \
-        .bits_per_sample = /*static_cast<i2s_bits_per_sample_t>*/(16),                                                  \
+        .bits_per_sample = (i2s_bits_per_sample_t)(16),                                                  \
         .channel_format = I2S_CHANNEL_FMT_RIGHT_LEFT,                           \
         .communication_format = I2S_COMM_FORMAT_I2S,                            \
         .dma_buf_count = 6,     /*3*/                                           \

@@ -9,9 +9,14 @@
 
 //#define USE_ADAFRUIT_LIB
 
-#include <Arduino.h>
+#include <freertos/FreeRTOS.h>
+#include <freertos/task.h>
 #include <string.h>
 #include "esp_log.h"
+#include "bluetooth_service.h"
+#include <math.h>
+
+using namespace std;
 
 #if defined USE_ADAFRUIT_LIB
 	#include "Adafruit_SSD1331.h"
@@ -37,6 +42,7 @@ public:
 	void welcomeScreen();
 	void musicScreen();
 	void Logo();
+	void setDisplay(DISP_DESC *disp);
 	GuiHandler *refreshTitle();
 	GuiHandler *refreshArtist();
 	GuiHandler *refreshAlbum();
@@ -44,11 +50,11 @@ public:
 	GuiHandler *setTitle(String _title);
 	GuiHandler *setArtist(String _artist);
 	GuiHandler *setAlbum(String _album);
-	GuiHandler *scrollLine(String *line);
+	// GuiHandler *scrollLine(String *line);
 
 private:
 	void refreshRow(int16_t posx, String *datdata, color_t color);
-	void println(char *text);
+	// void println(char *text);
 	
 	DISP_DESC *display;
 	uint16_t x0, y0;

@@ -240,14 +240,14 @@ static esp_err_t _fatfs_destroy(audio_element_handle_t self)
 audio_element_handle_t fatfs_stream_init(fatfs_stream_cfg_t *config)
 {
     audio_element_handle_t el;
-    fatfs_stream_t *fatfs = audio_calloc(1, sizeof(fatfs_stream_t));
+    fatfs_stream_t *fatfs = (fatfs_stream_t *) audio_calloc(1, sizeof(fatfs_stream_t));
 
     AUDIO_MEM_CHECK(TAG, fatfs, return NULL);
 
-    audio_element_cfg_t cfg = DEFAULT_AUDIO_ELEMENT_CONFIG();
+    audio_element_cfg_t cfg = {};
     cfg.open = _fatfs_open;
     cfg.close = _fatfs_close;
-    cfg.process = _fatfs_process;
+    cfg.process = (process_func) _fatfs_process;
     cfg.destroy = _fatfs_destroy;
     cfg.task_stack = config->task_stack;
     cfg.task_prio = config->task_prio;
@@ -262,9 +262,9 @@ audio_element_handle_t fatfs_stream_init(fatfs_stream_cfg_t *config)
     fatfs->type = config->type;
 
     if (config->type == AUDIO_STREAM_WRITER) {
-        cfg.write = _fatfs_write;
+        cfg.write = (stream_func) _fatfs_write;
     } else {
-        cfg.read = _fatfs_read;
+        cfg.read = (stream_func) _fatfs_read;
     }
     el = audio_element_init(&cfg);
 
