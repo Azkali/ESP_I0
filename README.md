@@ -24,7 +24,7 @@ ESP_I0 Functions and Configurations
 | AD2P-SRC            |   -   |
 | APPFS               |   -   |
 | GenericAudioHandler |   X   |
-| GUIHandler          |   X   |
+| GUIHandler          |   Ok  |
 | AudioMeta           |   X   |
 | FreeRTOS            |   ?   |
 | HFP                 |   Ok  |
